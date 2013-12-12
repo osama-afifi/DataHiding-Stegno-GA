@@ -111,6 +111,7 @@
             this.ChooseImageButton.TabIndex = 6;
             this.ChooseImageButton.Text = "...";
             this.ChooseImageButton.UseVisualStyleBackColor = true;
+            this.ChooseImageButton.Click += new System.EventHandler(this.ChooseImageButton_Click);
             // 
             // OutputMessageBox
             // 
@@ -126,6 +127,7 @@
             this.SelectImagetoDecryptBox.Name = "SelectImagetoDecryptBox";
             this.SelectImagetoDecryptBox.Size = new System.Drawing.Size(212, 20);
             this.SelectImagetoDecryptBox.TabIndex = 8;
+            this.SelectImagetoDecryptBox.TextChanged += new System.EventHandler(this.SelectImagetoDecryptBox_TextChanged);
             // 
             // SelectImageToDecryptButton
             // 
@@ -135,6 +137,7 @@
             this.SelectImageToDecryptButton.TabIndex = 9;
             this.SelectImageToDecryptButton.Text = "...";
             this.SelectImageToDecryptButton.UseVisualStyleBackColor = true;
+            this.SelectImageToDecryptButton.Click += new System.EventHandler(this.SelectImageToDecryptButton_Click);
             // 
             // label1
             // 
@@ -167,6 +170,7 @@
             this.DecryptionHash.Name = "DecryptionHash";
             this.DecryptionHash.Size = new System.Drawing.Size(163, 20);
             this.DecryptionHash.TabIndex = 13;
+            this.DecryptionHash.TextChanged += new System.EventHandler(this.DecryptionHash_TextChanged);
             // 
             // label3
             // 

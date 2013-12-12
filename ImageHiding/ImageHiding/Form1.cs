@@ -57,6 +57,31 @@ namespace ImageHiding
 
         }
 
+        private void ChooseImageButton_Click(object sender, EventArgs e)
+        {
+            string imagepath = SelectImageFile();
+            FileImageDirectoryBox.Text = imagepath;
+        }
+
+        private void SelectImageToDecryptButton_Click(object sender, EventArgs e)
+        {
+            string imagepath = SelectImageFile();
+            SelectImagetoDecryptBox.Text = imagepath;
+            
+        }
+
+        private void SelectImagetoDecryptBox_TextChanged(object sender, EventArgs e)
+        {
+      
+        }
+
+
+        private void DecryptionHash_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+ 
      
 
  
