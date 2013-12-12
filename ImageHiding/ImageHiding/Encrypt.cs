@@ -13,6 +13,7 @@ namespace ImageHiding
         private string secretMessage;
         private Bitmap coverImageBitmap;
         private FastBitmap coverImage;
+
         public Encrypt(string secretMessage, string coverImageDirectory)
         {
             this.secretMessage = secretMessage;
@@ -20,7 +21,48 @@ namespace ImageHiding
             coverImage = new FastBitmap(coverImageBitmap);  // FastBitmap is a costum created unsafe bitmap which allow faster access by manual locking/unlocking
 
         }
+        static string hashFunction(int a, int b, int c, int d, int l)
+        {
+            List<int> Nums = new List<int>();
+            Nums.Add(a); Nums.Add(b); Nums.Add(c); Nums.Add(d); Nums.Add(l);
+            string hashed = "";
+            for (int j = 0; j < 5; j++)
+            {
+                long Pow = (long)Math.Pow(2.0, 32.0);
+                long i = Nums[j] * 2654435761;
+                long div = i / Pow;
+                long rem = i % Pow;
 
+                hashed += div;
+                hashed += '-';
+                hashed += rem;
+                hashed += '-';
+            }
+            return hashed;
+        }
+
+        static List<int> decrypt_hash(string ss)
+        {
+            List<int> param = new List<int>();
+            List<long> dec = new List<long>();
+            while (ss != "")
+            {
+                int idx = ss.IndexOf('-');
+                string num = ss.Substring(0, idx);
+                ss = ss.Substring(idx + 1);
+                long numb = Convert.ToInt64(num);
+                dec.Add(numb);
+            }
+            long Pow = (long)Math.Pow(2.0, 32.0);
+            for (int i = 0; i < 10; i += 2)
+            {
+                long num = dec[i] * Pow;
+                num += dec[i + 1];
+                num = num / 2654435761;
+                param.Add((int)num);
+            }
+            return param;
+        }
         public void Run()
         {
             coverImage.LockImage(); // Lock Cover Image for Accessing
@@ -36,7 +78,6 @@ namespace ImageHiding
             // lw 5lsna el klam da n3ml class el Decrypt w yb2a 5lsna mn el project mn 8er optimization
             // ya ret n5ls da 2nhrda
             ////////////////////////////////////////
-            int hoda;
             coverImage.UnlockImage();
             coverImageBitmap.Dispose(); // Clear Image from Memory
         
