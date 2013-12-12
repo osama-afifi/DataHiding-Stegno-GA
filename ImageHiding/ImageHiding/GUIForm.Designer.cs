@@ -1,6 +1,6 @@
 ﻿namespace ImageHiding
 {
-    partial class Form1
+    partial class GUIForm
     {
         /// <summary>
         /// Required designer variable.

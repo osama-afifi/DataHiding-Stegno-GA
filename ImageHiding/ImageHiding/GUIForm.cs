@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace ImageHiding
 {
-    public partial class Form1 : Form
+    public partial class GUIForm : Form
     {
-        public Form1()
+        public GUIForm()
         {
             InitializeComponent();
         }

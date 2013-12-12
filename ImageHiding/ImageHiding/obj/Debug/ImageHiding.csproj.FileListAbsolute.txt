@@ -5,5 +5,5 @@ D:\Osama\Programming\Projects\Image Hiding\ImageHidingGit\ImageHiding\ImageHidin
 D:\Osama\Programming\Projects\Image Hiding\ImageHidingGit\ImageHiding\ImageHiding\obj\Debug\ImageHiding.csproj.GenerateResource.Cache
 D:\Osama\Programming\Projects\Image Hiding\ImageHidingGit\ImageHiding\ImageHiding\obj\Debug\ImageHiding.exe
 D:\Osama\Programming\Projects\Image Hiding\ImageHidingGit\ImageHiding\ImageHiding\obj\Debug\ImageHiding.pdb
-D:\Osama\Programming\Projects\Image Hiding\ImageHidingGit\ImageHiding\ImageHiding\obj\Debug\ImageHiding.Form1.resources
 D:\Osama\Programming\Projects\Image Hiding\ImageHidingGit\ImageHiding\ImageHiding\obj\Debug\ImageHiding.csprojResolveAssemblyReference.cache
+D:\Osama\Programming\Projects\Image Hiding\ImageHidingGit\ImageHiding\ImageHiding\obj\Debug\ImageHiding.GUIForm.resources

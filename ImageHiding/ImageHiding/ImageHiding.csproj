@@ -47,16 +47,16 @@
   <ItemGroup>
     <Compile Include="Encrypt.cs" />
     <Compile Include="FastBitmap.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="GUIForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="GUIForm.Designer.cs">
+      <DependentUpon>GUIForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <EmbeddedResource Include="GUIForm.resx">
+      <DependentUpon>GUIForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
