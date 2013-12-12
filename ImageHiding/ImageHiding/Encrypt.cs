@@ -36,7 +36,7 @@ namespace ImageHiding
             // lw 5lsna el klam da n3ml class el Decrypt w yb2a 5lsna mn el project mn 8er optimization
             // ya ret n5ls da 2nhrda
             ////////////////////////////////////////
-
+            int hoda;
             coverImage.UnlockImage();
             coverImageBitmap.Dispose(); // Clear Image from Memory
         
