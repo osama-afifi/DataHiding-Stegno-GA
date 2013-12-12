@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,14 +23,13 @@ namespace ImageHiding
 
         }
 
-        public void Run()
+        public void Run(int NumberOfLSB = 4)
         {
-            coverImage.LockImage(); // Lock Cover Image for Accessing
-
-            // partitionMessage();
-            // generateRandomSequence();
+            BitArray MessageBitString = new BitArray(partitionMessage(secretMessage));
+            int x0 = 0, a = 1, b = 1, c = 1;// x0 , xi+1 = a(xi+1)^b +c passed by reference
+            generateSequence(ref x0, ref a, ref b, ref c);
             // HashRecurrence();
-            //ReplacePixels();
+            // ReplacePixels();
 
             ///////////////////////////////////////////////////
             //  3shan tst3ml el pixel get w set shofo da 3shan 2na mnzl class lil bitmap m5soos 2sr3 mn el default f lasm t2ro da
@@ -37,12 +37,17 @@ namespace ImageHiding
             // lw 5lsna el klam da n3ml class el Decrypt w yb2a 5lsna mn el project mn 8er optimization
             // ya ret n5ls da 2nhrda
             ////////////////////////////////////////
+
+
+
+            coverImage.LockImage();
+            // image editing here 
             coverImage.UnlockImage();
             coverImageBitmap.Dispose(); // Clear Image from Memory
 
         }
 
-        static string hashFunction(int a, int b, int c, int d, int l)
+        static string hashRecurrence(int a, int b, int c, int d, int l)
         {
             List<int> Nums = new List<int>();
             Nums.Add(a); Nums.Add(b); Nums.Add(c); Nums.Add(d); Nums.Add(l);
@@ -61,28 +66,23 @@ namespace ImageHiding
             }
             return hashed;
         }
-
-        static List<int> decrypt_hash(string ss)
+        BitArray partitionMessage(string secretMessage)
         {
-            List<int> param = new List<int>();
-            List<long> dec = new List<long>();
-            while (ss != "")
-            {
-                int idx = ss.IndexOf('-');
-                string num = ss.Substring(0, idx);
-                ss = ss.Substring(idx + 1);
-                long numb = Convert.ToInt64(num);
-                dec.Add(numb);
-            }
-            long Pow = (long)Math.Pow(2.0, 32.0);
-            for (int i = 0; i < 10; i += 2)
-            {
-                long num = dec[i] * Pow;
-                num += dec[i + 1];
-                num = num / 2654435761;
-                param.Add((int)num);
-            }
-            return param;
+            int len = secretMessage.Length;
+            BitArray bitString = new BitArray(len * 8 + 1);
+            //byte[] ByteString  = new byte[len * 8 + 1] ;
+            for (int i = 0; i < len; i++)
+                for (int bit = 0; bit < 8; bit++)
+                    bitString.Set(i * 8 + bit, (secretMessage[i] & (1 << (7 - bit))) == 1);
+
+            return bitString;
         }
+
+        void generateSequence(ref int x0, ref int a, ref int b, ref int c)
+        {
+            // here we will implement the optimal seq.
+            // for now x0 = 0 , xi+1 = (1xi^1+1)%(m*n)
+        }
+
     }
 }
