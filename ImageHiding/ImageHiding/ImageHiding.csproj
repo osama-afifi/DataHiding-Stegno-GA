@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Decrypt.cs" />
     <Compile Include="Encrypt.cs" />
     <Compile Include="FastBitmap.cs" />
     <Compile Include="GUIForm.cs">
