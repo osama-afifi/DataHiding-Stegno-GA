@@ -44,6 +44,9 @@ namespace ImageHiding
 
         private void EncryptButton_Click(object sender, EventArgs e)
         {
+            string SecretMessage = InputMessageBox.Text;
+            string CoverImageDir = FileImageDirectoryBox.Text;
+
 
         }
 
@@ -74,7 +77,6 @@ namespace ImageHiding
         {
       
         }
-
 
         private void DecryptionHash_TextChanged(object sender, EventArgs e)
         {
