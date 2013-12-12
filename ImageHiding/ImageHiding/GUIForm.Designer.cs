@@ -46,13 +46,15 @@
             this.CopyButton = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.PasteButton = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.BeforePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AfterPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // BeforePictureBox
             // 
-            this.BeforePictureBox.Location = new System.Drawing.Point(381, 12);
+            this.BeforePictureBox.Location = new System.Drawing.Point(382, 24);
             this.BeforePictureBox.Name = "BeforePictureBox";
             this.BeforePictureBox.Size = new System.Drawing.Size(170, 170);
             this.BeforePictureBox.TabIndex = 0;
@@ -61,7 +63,7 @@
             // 
             // AfterPictureBox
             // 
-            this.AfterPictureBox.Location = new System.Drawing.Point(574, 12);
+            this.AfterPictureBox.Location = new System.Drawing.Point(578, 24);
             this.AfterPictureBox.Name = "AfterPictureBox";
             this.AfterPictureBox.Size = new System.Drawing.Size(170, 170);
             this.AfterPictureBox.TabIndex = 1;
@@ -209,11 +211,31 @@
             this.PasteButton.Text = "Paste!";
             this.PasteButton.UseVisualStyleBackColor = true;
             // 
-            // Form1
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(382, 8);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(67, 13);
+            this.label4.TabIndex = 19;
+            this.label4.Text = "Cover Image";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(578, 8);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(84, 13);
+            this.label6.TabIndex = 20;
+            this.label6.Text = "EncryptedImage";
+            // 
+            // GUIForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(760, 456);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.PasteButton);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.CopyButton);
@@ -232,7 +254,7 @@
             this.Controls.Add(this.EncryptButton);
             this.Controls.Add(this.AfterPictureBox);
             this.Controls.Add(this.BeforePictureBox);
-            this.Name = "Form1";
+            this.Name = "GUIForm";
             this.Text = "Image Data Hiding using Genetic Algorithms";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.BeforePictureBox)).EndInit();
@@ -262,6 +284,8 @@
         private System.Windows.Forms.Button CopyButton;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button PasteButton;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label6;
 
     }
 }
