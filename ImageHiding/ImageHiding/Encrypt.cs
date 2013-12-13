@@ -84,9 +84,8 @@ namespace ImageHiding
             Bitmap stegoImage = new Bitmap(coverImageBitmap);
             int n = stegoImage.Height;
             int m = stegoImage.Width;
-            const int MOD = m * n;
+            int MOD = m * n;
             int index = x0;
-            int counter = 0;
             for (int i = 0; i < MessageBitString.Length; i++)
             {
                 int x = index / n;
@@ -95,7 +94,7 @@ namespace ImageHiding
                 Color OldColor = stegoImage.GetPixel(x, y);
                 Color NewColor = Color.FromArgb(ReplaceLSB(OldColor.ToArgb(), (byte)newLSB));
                 stegoImage.SetPixel(x, y, NewColor);
-                index = (((a % MOD * powerMod(ref index, b, ref MOD)) % MOD) + c % MOD) % MOD;
+                index = (((a % MOD * (int)powerMod(ref index, b, ref MOD)) % MOD) + c % MOD) % MOD;
             }
             stegoImage.Dispose();
             //coverImage.LockImage();
@@ -104,18 +103,16 @@ namespace ImageHiding
 
         }
 
-        private int powerMod(ref int Number, int Power, ref int MOD)
+        private long powerMod(ref int Number, int Power, ref int MOD)
         {
             if (Power == 0) return 1;
-
-
             if (Power % 2 == 1)
-                return (powerMod(ref Number, Power - 1, ref MOD) % MOD * Number % MOD) % MOD;
-
+                return (powerMod(ref Number, Power - 1, ref MOD) % MOD * (long)Number % MOD) % MOD;
             else
             {
-                int Ret = powerMod(ref Number, Power - 1, ref MOD);
-                return ((Ret % MOD) * (Ret % MOD)) % MOD;
+                long Ret = powerMod(ref Number, Power - 1, ref MOD);
+                Ret *= Ret;
+                return Ret%MOD;
             }
 
         }
