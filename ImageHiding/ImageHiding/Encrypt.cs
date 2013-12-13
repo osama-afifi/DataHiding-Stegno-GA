@@ -29,7 +29,7 @@ namespace ImageHiding
 
         public string Run()
         {
-            MessageBitString = new BitArray(PartitionMessage(secretMessage));
+            MessageBitString = PartitionMessage(secretMessage);
             string outputHash = "";
             int x0 = 0, a = 1, b = 1, c = 1;// x0 , xi+1 = a(xi+1)^b +c passed by reference
             GenerateSequence(ref x0, ref a, ref b, ref c);
