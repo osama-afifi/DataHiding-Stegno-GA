@@ -81,9 +81,11 @@ namespace ImageHiding
 
         private void ReplacePixels(int x0, int a, int b, int c)
         {
-            Bitmap stegoImage = new Bitmap(coverImageBitmap);
-            int n = stegoImage.Height;
-            int m = stegoImage.Width;
+            Bitmap stegoImageBitmap = new Bitmap(coverImageBitmap);
+            FastBitmap stegoImage = new FastBitmap(stegoImageBitmap);
+            int n = stegoImageBitmap.Height;
+            int m = stegoImageBitmap.Width;
+            stegoImage.LockImage();
             int MOD = m * n;
             int index = x0;
             for (int i = 0; i < MessageBitString.Length; i++)
@@ -96,7 +98,8 @@ namespace ImageHiding
                 stegoImage.SetPixel(x, y, NewColor);
                 index = (((a % MOD * (int)powerMod(ref index, b, ref MOD)) % MOD) + c % MOD) % MOD;
             }
-            stegoImage.Dispose();
+            stegoImage.UnlockImage();
+            stegoImageBitmap.Dispose();
             //coverImage.LockImage();
             //coverImage.UnlockImage();
             //coverImageBitmap.Dispose(); // Clear Image from Memory
