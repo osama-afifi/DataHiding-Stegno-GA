@@ -13,12 +13,13 @@ namespace ImageHiding
         private string secretMessage;
         private Bitmap stegoImageBitmap;
         private FastBitmap stegoImage;
-
+        private int numOfLSB;
          public Decrypt(string secretMessage, string coverImageDirectory)
         {
             this.secretMessage = secretMessage;
             stegoImageBitmap = new Bitmap(coverImageDirectory); // Creating Ordinary Bitmap to Load Image from Path 
             stegoImage = new FastBitmap(stegoImageBitmap);  // FastBitmap is a costum created unsafe bitmap which allow faster access by manual locking/unlocking
+            numOfLSB = 4;
         }
 
          static List<int> decrypt_hash(string ss)
@@ -42,6 +43,25 @@ namespace ImageHiding
                  param.Add((int)num);
              }
              return param;
+         }
+
+         public string getMessage(List<byte> nums)
+         {
+             string ret = "";
+             int len = secretMessage.Length;
+             int partSize = (7 + numOfLSB) / numOfLSB;
+             int temp = 0;
+             for (int i = 0; i < nums.Count; i += partSize)
+             {
+                 temp = 0;
+                 for (int k = 0; k < partSize; k++)
+                 {
+                     for (int j = 0; j < numOfLSB; j++)
+                         temp += (int)Math.Pow(2.0, (nums[i + k] & (1 << j)) * (k * numOfLSB + j));
+                 }
+                 ret += Convert.ToChar(temp);
+             }
+             return ret;
          }
     }
 }
