@@ -14,9 +14,11 @@ namespace ImageHiding
         private string secretMessage;
         private Bitmap coverImageBitmap;
         private FastBitmap coverImage;
-        byte[] MessageBitString;
+        private Bitmap stegoImageBitmap;
+       private FastBitmap stegoImage;
+        //    private byte[] MessageBitString;
         private int NumberOfLSB;
-        int BitPartitions;
+        private int BitPartitions;
 
         public Encrypt(string secretMessage, string coverImageDirectory)
         {
@@ -29,15 +31,22 @@ namespace ImageHiding
 
         public string Run()
         {
-            MessageBitString = PartitionMessage(secretMessage);
+            // MessageBitString = PartitionMessage(secretMessage);
             string outputHash = "";
-            int x0 = 0, a = 1, b = 1, c = 1;// x0 , xi+1 = a(xi+1)^b +c passed by reference
+            int x0 = 0, a = 1, b = 1, c = 1; // x0 , xi+1 = a(xi+1)^b +c passed by reference
             GenerateSequence(ref x0, ref a, ref b, ref c);
             ReplacePixels(x0, a, b, c);
             outputHash = HashRecurrence(x0, a, b, c, secretMessage.Length);
             return outputHash;
         }
 
+        public void SaveStegoImage(string stegoDir)
+        {
+            if (stegoDir == null) return;
+            
+            stegoImageBitmap.Save(@stegoDir);
+            stegoImageBitmap.Dispose();
+        }
         private string HashRecurrence(int a, int b, int c, int d, int l)
         {
             List<int> Nums = new List<int>();
@@ -57,21 +66,6 @@ namespace ImageHiding
             }
             return hashed;
         }
-        private byte[] PartitionMessage(string secretMessage)
-        {
-            int len = secretMessage.Length;
-            int partSize = (8 + NumberOfLSB - 1) / NumberOfLSB;
-            byte[] bitString = new byte[len * partSize + len];
-
-
-            for (int i = 0; i < len; i++)
-                for (int bit = 0; bit < 8; bit++)
-                    bitString[i * bit / partSize] = (byte)(((int)secretMessage[i] & (1 << bit)));
-
-
-
-            return bitString;
-        }
 
         private void GenerateSequence(ref int x0, ref int a, ref int b, ref int c)
         {
@@ -79,32 +73,49 @@ namespace ImageHiding
             // for now x0 = 0 , xi+1 = (1xi^1+1)%(m*n)
         }
 
+
         private void ReplacePixels(int x0, int a, int b, int c)
         {
-            Bitmap stegoImageBitmap = new Bitmap(coverImageBitmap);
-            FastBitmap stegoImage = new FastBitmap(stegoImageBitmap);
+            stegoImageBitmap = new Bitmap(coverImageBitmap);
+           stegoImage = new FastBitmap(stegoImageBitmap);
             int n = stegoImageBitmap.Height;
             int m = stegoImageBitmap.Width;
-            stegoImage.LockImage();
-            int MOD = m * n;
-            int index = x0;
-            for (int i = 0; i < MessageBitString.Length; i++)
-            {
-                int x = index / n;
-                int y = index % m;
-                int newLSB = ReplaceLSB(0, MessageBitString[i]);
-                Color OldColor = stegoImage.GetPixel(x, y);
-                Color NewColor = Color.FromArgb(ReplaceLSB(OldColor.ToArgb(), (byte)newLSB));
-                stegoImage.SetPixel(x, y, NewColor);
-                index = (((a % MOD * (int)powerMod(ref index, b, ref MOD)) % MOD) + c % MOD) % MOD;
-            }
-            stegoImage.UnlockImage();
-            stegoImageBitmap.Dispose();
-            //coverImage.LockImage();
-            //coverImage.UnlockImage();
-            //coverImageBitmap.Dispose(); // Clear Image from Memory
+           stegoImage.LockImage();
+            for (int i = 0; i < m; i++)
+                for (int j = 0; j < n; j++)
+                    stegoImage.SetPixel(i, j, Color.Black);
+          stegoImage.UnlockImage();
+           stegoImageBitmap.Dispose();
 
         }
+
+        //private void ReplacePixels(int x0, int a, int b, int c)
+        //{
+        //    stegoImageBitmap = new Bitmap(coverImageBitmap);
+        //    stegoImage = new FastBitmap(stegoImageBitmap);
+        //    int n = stegoImageBitmap.Height;
+        //    int m = stegoImageBitmap.Width;
+        //    stegoImage.LockImage();
+        //    int MOD = m * n;
+        //    int index = x0;
+        //    int lsbSwitch = 0;
+        //    for (int i = 0; i < 2*secretMessage.Length; i++)
+        //    {
+        //               int x = index / n;
+        //               int y = index % m;
+        //               byte newLSB = (byte)(((1 << NumberOfLSB) - 1) << (lsbSwitch * NumberOfLSB) & secretMessage[i/2]);
+        //               newLSB = (lsbSwitch==1) ? (byte)(lsbSwitch >>= NumberOfLSB) : newLSB;
+        //               Color OldColor = stegoImage.GetPixel(x, y);
+        //               byte newARGB = (byte)clearKBits(OldColor.ToArgb(), NumberOfLSB);
+        //               newARGB |= newLSB;
+        //               stegoImage.SetPixel(x, y, Color.FromArgb(newARGB));
+        //               index = (((a % MOD * (int)powerMod(ref index, b, ref MOD)%MOD) % MOD) + c % MOD) % MOD;
+        //               lsbSwitch ^= 1;
+        //    }
+        //    stegoImage.UnlockImage();
+
+        //}
+
 
         private long powerMod(ref int Number, int Power, ref int MOD)
         {
@@ -115,16 +126,16 @@ namespace ImageHiding
             {
                 long Ret = powerMod(ref Number, Power - 1, ref MOD);
                 Ret *= Ret;
-                return Ret%MOD;
+                return Ret % MOD;
             }
 
         }
 
-        private int ReplaceLSB(int original, byte pat)
+        private int clearKBits(int original, int k)
         {
             int ret = original;
-            ret = ((ret & (~((1 << (NumberOfLSB + 1)) - 1)))); // clear k bits
-            ret |= ((int)pat & ((1 << (NumberOfLSB + 1)) - 1)); // set the k bits
+            ret = ((ret & (~((1 << (k + 1)) - 1)))); // clear k bits
+            //   ret |= ((int)pat & ((1 << (NumberOfLSB + 1)) - 1)); // set the k bits
             return ret;
         }
 

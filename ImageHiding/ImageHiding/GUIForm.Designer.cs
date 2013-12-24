@@ -97,6 +97,7 @@
             this.InputMessageBox.Name = "InputMessageBox";
             this.InputMessageBox.Size = new System.Drawing.Size(337, 124);
             this.InputMessageBox.TabIndex = 4;
+            this.InputMessageBox.TextChanged += new System.EventHandler(this.InputMessageBox_TextChanged);
             // 
             // FileImageDirectoryBox
             // 
@@ -165,6 +166,7 @@
             this.EncryptionHash.Name = "EncryptionHash";
             this.EncryptionHash.Size = new System.Drawing.Size(181, 20);
             this.EncryptionHash.TabIndex = 12;
+            this.EncryptionHash.TextChanged += new System.EventHandler(this.EncryptionHash_TextChanged);
             // 
             // DecryptionHash
             // 
@@ -192,6 +194,7 @@
             this.CopyButton.TabIndex = 15;
             this.CopyButton.Text = "Copy!";
             this.CopyButton.UseVisualStyleBackColor = true;
+            this.CopyButton.Click += new System.EventHandler(this.CopyButton_Click);
             // 
             // label5
             // 
