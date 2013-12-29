@@ -12,7 +12,7 @@ namespace ImageHiding
     {
         private string HashInput;
         private Bitmap stegoImageBitmap;
-        private FastBitmap stegoImage;
+      //  private FastBitmap stegoImage;
         private int numOfLSB;
         private int messageLength;
         //     private byte[] MessageBitString;
@@ -20,7 +20,7 @@ namespace ImageHiding
         {
             this.HashInput = HashInput;
             stegoImageBitmap = new Bitmap(stegoImageDirectory); // Creating Ordinary Bitmap to Load Image from Path 
-            stegoImage = new FastBitmap(stegoImageBitmap);  // FastBitmap is a costum created unsafe bitmap which allow faster access by manual locking/unlocking
+        //    stegoImage = new FastBitmap(stegoImageBitmap);  // FastBitmap is a costum created unsafe bitmap which allow faster access by manual locking/unlocking
             numOfLSB = 4;
         }
 
@@ -86,7 +86,7 @@ namespace ImageHiding
                  int x0 = para[0], a = para[1], b = para[2], c = para[3];
                  int n = stegoImageBitmap.Height;
                  int m = stegoImageBitmap.Width;
-                 stegoImage.LockImage();
+            //     stegoImage.LockImage();
                  int MOD = m * n;
                  int index = x0;
 
@@ -97,13 +97,14 @@ namespace ImageHiding
 
                  int x = index / n;
                  int y = index % m;
-                 Color TargetPixelColor = stegoImage.GetPixel(x, y);
-                 //newByte |=  (getLSB((byte)TargetPixelColor.ToArgb(), numOfLSB)) <<(lsbSwitch*numOfLSB);
+                 Color TargetPixelColor = stegoImageBitmap.GetPixel(x, y);
+                 int colorARGB = TargetPixelColor.ToArgb();
+                 //newByte |=  (getLSB(colorARGB, numOfLSB)) <<(lsbSwitch*numOfLSB);
                  if (lsbSwitch == 1)
                  {
                   //   newByte <<= (numOfLSB);
-                     byte MSB = (byte)(getLSB((byte)TargetPixelColor.ToArgb(), numOfLSB) << (numOfLSB));
-                     newByte |= MSB;
+                     byte MSB = (byte)(getLSB(colorARGB>> (numOfLSB), numOfLSB) );
+                     newByte |= (MSB << numOfLSB);
                      decryptedMessage += (char)newByte;
                  }
                  else newByte = getLSB((byte)TargetPixelColor.ToArgb(), numOfLSB);
@@ -111,7 +112,7 @@ namespace ImageHiding
                  index = (((a % MOD * (int)powerMod(ref index, b, ref MOD) % MOD) % MOD) + c % MOD) % MOD;
                  lsbSwitch ^= 1;
              }
-             stegoImage.UnlockImage();
+          //   stegoImage.UnlockImage();
              return decryptedMessage;
          }
 

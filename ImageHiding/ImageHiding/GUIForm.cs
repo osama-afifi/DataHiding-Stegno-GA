@@ -32,7 +32,7 @@ namespace ImageHiding
 
         }
 
-        private string SelectImageFile(string initialDirectory = "C:\\")
+        private string SelectImageFile(string initialDirectory = "C:\\Users\\Osama\\Desktop\\")
         {
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter =
@@ -41,7 +41,7 @@ namespace ImageHiding
             dialog.Title = "Select a file";
             return (dialog.ShowDialog() == DialogResult.OK) ? dialog.FileName : null;
         }
-        private string SaveImageFileDialog(string initialDirectory = "C:\\")
+        private string SaveImageFileDialog(string initialDirectory = "C:\\Users\\Osama\\Desktop\\")
         {
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.Filter =
