@@ -11,6 +11,7 @@ namespace ImageHiding
 {
     public class Encrypt
     {
+	//menna
         private string secretMessage;
         private Bitmap coverImageBitmap;
       //  private FastBitmap coverImage;
