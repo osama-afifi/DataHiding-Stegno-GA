@@ -113,6 +113,7 @@ namespace ImageHiding
                  lsbSwitch ^= 1;
              }
           //   stegoImage.UnlockImage();
+             stegoImageBitmap.Dispose();
              return decryptedMessage;
          }
 
