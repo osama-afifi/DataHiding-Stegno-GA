@@ -95,8 +95,8 @@ namespace ImageHiding
                  if (lsbSwitch == 0)
                   newByte = 0;
 
-                 int x = index / n;
-                 int y = index % m;
+                 int x = index / m;
+                 int y = index % n;
                  Color TargetPixelColor = stegoImageBitmap.GetPixel(x, y);
                  int colorARGB = TargetPixelColor.ToArgb();
                  //newByte |=  (getLSB(colorARGB, numOfLSB)) <<(lsbSwitch*numOfLSB);

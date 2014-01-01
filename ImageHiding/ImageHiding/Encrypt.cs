@@ -11,7 +11,6 @@ namespace ImageHiding
 {
     public class Encrypt
     {
-	//menna
         private string secretMessage;
         private Bitmap coverImageBitmap;
       //  private FastBitmap coverImage;
@@ -45,7 +44,7 @@ namespace ImageHiding
         {
             if (stegoDir == null) return;
             stegoImageBitmap.Save(@stegoDir);
-            //   stegoImageBitmap.Dispose();
+               stegoImageBitmap.Dispose();
         }    
         private string HashRecurrence(int a, int b, int c, int d, int l)
         {
