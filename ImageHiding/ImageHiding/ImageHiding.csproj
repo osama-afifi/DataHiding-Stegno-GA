@@ -48,6 +48,8 @@
     <Compile Include="Decrypt.cs" />
     <Compile Include="Encrypt.cs" />
     <Compile Include="FastBitmap.cs" />
+    <Compile Include="GeneticAlgorithm\GeneticAlgorithm.cs" />
+    <Compile Include="GeneticAlgorithm\Organism.cs" />
     <Compile Include="GUIForm.cs">
       <SubType>Form</SubType>
     </Compile>
