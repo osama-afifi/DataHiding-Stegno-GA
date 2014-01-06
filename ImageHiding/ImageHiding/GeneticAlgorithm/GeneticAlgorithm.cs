@@ -29,6 +29,9 @@ namespace ImageHiding.GeneticAlgorithm
         private int elitismFactor;
         private ArrayList population;
         private KeyValuePair<int, int>[] genesDomain;
+        private double fitnessSum;
+        private double[] probability;
+        private double[] cumProbability;
         #endregion
 
         public delegate double EvaluationDelegate(params int[] values);
@@ -59,7 +62,7 @@ namespace ImageHiding.GeneticAlgorithm
         public bool PrintLogMode;
 
 
-        public GeneticAlgorithm(int populationSize, int chromosomeLength, int numberOfGenerations, double crossoverRate, double mutationRate, EvaluationDelegate fitnessFunction, int elitismFactor = 0, SelectionMode Selection = SelectionMode.RouletteWheel , bool PrintLogMode = false)
+        public GeneticAlgorithm(int populationSize, int chromosomeLength, int numberOfGenerations, double crossoverRate, double mutationRate, EvaluationDelegate fitnessFunction, int elitismFactor = 0, SelectionMode Selection = SelectionMode.RouletteWheel, bool PrintLogMode = false)
         {
             this.populationSize = populationSize;
             this.chromosomeLength = chromosomeLength;
@@ -111,12 +114,17 @@ namespace ImageHiding.GeneticAlgorithm
             ArrayList Elites = new ArrayList();
             for (int i = 0; i < elitismFactor; i++)
                 Elites.Add((Organism)population[i]);
+
+            //preprocess roulette selection
+            if (Selection == SelectionMode.RouletteWheel)
+                TournamentPreProcess();
+
             for (int i = 0; i < populationSize; i++)
             {
                 Organism parent1 = (Organism)population[ParentSelection()];
                 Organism parent2 = (Organism)population[ParentSelection()];
                 Organism child1 = new Organism();
-                Organism child2 = new Organism();                   
+                Organism child2 = new Organism();
                 if (GARandomGenerator.NextDouble() < crossoverRate)
                     crossover(ref parent1, ref parent2, out child1, out child2);
                 mutate(ref child1);
@@ -124,7 +132,7 @@ namespace ImageHiding.GeneticAlgorithm
                 newPopulation.Add((Organism)child1);
                 newPopulation.Add((Organism)child2);
             }
-            for (int i = 0; i < elitismFactor && i<populationSize; i++)
+            for (int i = 0; i < elitismFactor && i < populationSize; i++)
                 newPopulation[i] = (Organism)Elites[i];
             population.Clear();
             population = new ArrayList(newPopulation);
@@ -171,9 +179,84 @@ namespace ImageHiding.GeneticAlgorithm
         }
         #endregion
 
+        #region Selection Preprocess
+
+        void RouletteWheelPreProcess()
+        {
+            probability = new double[populationSize];
+            cumProbability = new double[populationSize];
+            fitnessSum = 0;
+            for (int i = 0; i < populationSize; i++)
+            {
+                fitnessSum += ((Organism)population[i]).fitnessValue;
+            }
+            //probability of each organism from the population according to its fitness value
+            for (int i = 0; i < populationSize; i++)
+            {
+                probability[i] = ((Organism)population[i]).fitnessValue / fitnessSum;
+            }
+            //cumulative probability of each oragnism
+            for (int i = 0; i < populationSize; i++)
+            {
+                if (i == 0)
+                    cumProbability[i] = probability[i];
+                else
+                    cumProbability[i] = cumProbability[i - 1] + probability[i];
+            }
+
+        }
+
+        void TournamentPreProcess()
+        { }
+
+        void RewardBasedPreProcess()
+        { }
+
+        #endregion
+
+
         #   region Selection Algorithms
         private int RouletteWheel()
-        { return -1; }
+        {
+            Random rand = new Random();
+            double num = rand.NextDouble();
+
+            //binary search to find the random selected oragnism
+            int start = 0;
+            int end = populationSize - 1;
+            int mid = (start + end) / 2;
+            while (start < end)
+            {
+                mid = (start + end) / 2;
+                //the value is compared with the previous cumulative probability and the cumulative probability of the current item
+                //to handle the case if there is no previous item to compare with I set the previous value to 0
+                double prev;     
+                if (mid == 0)
+                {
+                    prev = 0.0;
+                }
+                else
+                {
+                    prev = cumProbability[mid - 1];
+                }
+                
+                if (num >= prev && num <= cumProbability[mid])
+                {
+                    return mid;
+                }
+                else if (num > cumProbability[mid])
+                {
+                    start = mid + 1;
+                }
+                else
+                {
+                    end = mid - 1;
+                }
+            }
+
+            return mid;
+        }
+
         private int Tournament()
         { return -1; }
         private int RewardBased()
