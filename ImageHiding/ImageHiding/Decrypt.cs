@@ -12,15 +12,15 @@ namespace ImageHiding
     {
         private string HashInput;
         private Bitmap stegoImageBitmap;
-      //  private FastBitmap stegoImage;
+        private FastBitmap stegoImage;
         private int numOfLSB;
         private int messageLength;
-        //     private byte[] MessageBitString;
+        //private byte[] MessageBitString;
         public Decrypt(string HashInput, string stegoImageDirectory)
         {
             this.HashInput = HashInput;
             stegoImageBitmap = new Bitmap(stegoImageDirectory); // Creating Ordinary Bitmap to Load Image from Path 
-        //    stegoImage = new FastBitmap(stegoImageBitmap);  // FastBitmap is a costum created unsafe bitmap which allow faster access by manual locking/unlocking
+            stegoImage = new FastBitmap(stegoImageBitmap);  // FastBitmap is a costum created unsafe bitmap which allow faster access by manual locking/unlocking
             numOfLSB = 4;
         }
 
@@ -86,7 +86,7 @@ namespace ImageHiding
                  int x0 = para[0], a = para[1], b = para[2], c = para[3];
                  int n = stegoImageBitmap.Height;
                  int m = stegoImageBitmap.Width;
-            //     stegoImage.LockImage();
+                 stegoImage.LockImage();
                  int MOD = m * n;
                  int index = x0;
 
@@ -97,7 +97,7 @@ namespace ImageHiding
 
                  int x = index / m;
                  int y = index % n;
-                 Color TargetPixelColor = stegoImageBitmap.GetPixel(x, y);
+                 Color TargetPixelColor = stegoImage.GetPixel(y, x);
                  int colorARGB = TargetPixelColor.ToArgb();
                  //newByte |=  (getLSB(colorARGB, numOfLSB)) <<(lsbSwitch*numOfLSB);
                  if (lsbSwitch == 1)
@@ -112,7 +112,7 @@ namespace ImageHiding
                  index = (((a % MOD * (int)powerMod(ref index, b, ref MOD) % MOD) % MOD) + c % MOD) % MOD;
                  lsbSwitch ^= 1;
              }
-          //   stegoImage.UnlockImage();
+             stegoImage.UnlockImage();
              stegoImageBitmap.Dispose();
              return decryptedMessage;
          }
