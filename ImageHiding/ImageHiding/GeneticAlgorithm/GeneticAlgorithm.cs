@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ImageHiding.GeneticAlgorithm
+namespace ImageHiding.GA
 {
 
-    class GeneticAlgorithm
+    public class GeneticAlgorithm
     {
 
         public enum SelectionMode
@@ -28,15 +28,15 @@ namespace ImageHiding.GeneticAlgorithm
         private int chromosomeLength;
         private int elitismFactor;
         private ArrayList population;
-        private KeyValuePair<int, int>[] genesDomain;
+        private BoundPair []genesDomain;
         private double fitnessSum;
-        private double[] probability;
-        private double[] cumProbability;
+        private double[] genomeProbability;
+        private double[] cummulativeProbability;
         #endregion
 
         public delegate double EvaluationDelegate(params int[] values);
         public EvaluationDelegate fitnessFunction;
-        public KeyValuePair<int, int>[] GenesDomain
+        public BoundPair[] GenesDomain
         {
             set
             {
@@ -62,7 +62,7 @@ namespace ImageHiding.GeneticAlgorithm
         public bool PrintLogMode;
 
 
-        public GeneticAlgorithm(int populationSize, int chromosomeLength, int numberOfGenerations, double crossoverRate, double mutationRate, EvaluationDelegate fitnessFunction, int elitismFactor = 0, SelectionMode Selection = SelectionMode.RouletteWheel, bool PrintLogMode = false)
+        public GeneticAlgorithm(int populationSize, int chromosomeLength, int numberOfGenerations, double crossoverRate, double mutationRate, EvaluationDelegate fitnessFunction, BoundPair[] genesDomain ,  int elitismFactor = 0, SelectionMode Selection = SelectionMode.RouletteWheel, bool PrintLogMode = false)
         {
             this.populationSize = populationSize;
             this.chromosomeLength = chromosomeLength;
@@ -70,9 +70,9 @@ namespace ImageHiding.GeneticAlgorithm
             this.crossoverRate = crossoverRate;
             this.mutationRate = mutationRate;
             this.fitnessFunction = fitnessFunction;
+            this.genesDomain = genesDomain;
             this.elitismFactor = elitismFactor;
             this.PrintLogMode = PrintLogMode;
-            genesDomain = new KeyValuePair<int, int>[chromosomeLength];
         }
 
         public Organism Run() // Warning you should assign an Fitness Function and genes Domain before running
@@ -88,7 +88,8 @@ namespace ImageHiding.GeneticAlgorithm
             return Best;
         }
 
-        #region population handlers
+        #region Population Handlers
+
         private void createInitialPopulation()
         {
             population.Clear();
@@ -115,9 +116,7 @@ namespace ImageHiding.GeneticAlgorithm
             for (int i = 0; i < elitismFactor; i++)
                 Elites.Add((Organism)population[i]);
 
-            //preprocess roulette selection
-            if (Selection == SelectionMode.RouletteWheel)
-                TournamentPreProcess();
+            SelectionPreprocess();
 
             for (int i = 0; i < populationSize; i++)
             {
@@ -141,23 +140,7 @@ namespace ImageHiding.GeneticAlgorithm
 
         #region Genetic Operators
 
-        private int ParentSelection()
-        {
-            int parentIndex = 0;
-            switch (Selection)
-            {
-                case SelectionMode.RouletteWheel:
-                    parentIndex = RouletteWheel();
-                    break;
-                case SelectionMode.Tournament:
-                    parentIndex = Tournament();
-                    break;
-                case SelectionMode.RewardBased:
-                    parentIndex = RewardBased();
-                    break;
-            }
-            return parentIndex;
-        }
+
         private void crossover(ref Organism parent1, ref Organism parent2, out Organism child1, out Organism child2)
         {
             int pivot = GARandomGenerator.Next(0, chromosomeLength - 1);
@@ -175,52 +158,79 @@ namespace ImageHiding.GeneticAlgorithm
         {
             for (int i = 0; i < chromosomeLength; i++)
                 if (GARandomGenerator.NextDouble() < mutationRate)
-                    mutatedOrganism.chromosome[i] = (mutatedOrganism.chromosome[i] + GARandomGenerator.Next(genesDomain[i].Key, genesDomain[i].Value)) / 2;
+                    mutatedOrganism.chromosome[i] = (mutatedOrganism.chromosome[i] + GARandomGenerator.Next(genesDomain[i].LowerBound, genesDomain[i].UpperBound)) / 2;
         }
         #endregion
 
         #region Selection Preprocess
 
-        void RouletteWheelPreProcess()
+        private void SelectionPreprocess()
         {
-            probability = new double[populationSize];
-            cumProbability = new double[populationSize];
-            fitnessSum = 0;
-            for (int i = 0; i < populationSize; i++)
+            switch (Selection)
             {
-                fitnessSum += ((Organism)population[i]).fitnessValue;
+                case SelectionMode.RouletteWheel:
+                    RouletteWheelPreprocess();
+                    break;
+                case SelectionMode.Tournament:
+                    TournamentPreprocess();
+                    break;
+                case SelectionMode.RewardBased:
+                    RewardBasedPreprocess();
+                    break;
             }
-            //probability of each organism from the population according to its fitness value
-            for (int i = 0; i < populationSize; i++)
-            {
-                probability[i] = ((Organism)population[i]).fitnessValue / fitnessSum;
-            }
-            //cumulative probability of each oragnism
-            for (int i = 0; i < populationSize; i++)
-            {
-                if (i == 0)
-                    cumProbability[i] = probability[i];
-                else
-                    cumProbability[i] = cumProbability[i - 1] + probability[i];
-            }
-
         }
 
-        void TournamentPreProcess()
+        void RouletteWheelPreprocess()
+        {
+            genomeProbability = new double[populationSize];
+            cummulativeProbability = new double[populationSize];
+            fitnessSum = 0;
+            for (int i = 0; i < populationSize; i++)
+                fitnessSum += ((Organism)population[i]).fitnessValue;
+
+            //probability of each organism from the population according to its fitness value
+            for (int i = 0; i < populationSize; i++)
+                genomeProbability[i] = ((Organism)population[i]).fitnessValue / fitnessSum;
+
+            //cumulative probability of each oragnism
+            for (int i = 0; i < populationSize; i++)
+                if (i == 0)
+                    cummulativeProbability[i] = genomeProbability[i];
+                else
+                    cummulativeProbability[i] = cummulativeProbability[i - 1] + genomeProbability[i];
+        }
+
+        void TournamentPreprocess()
         { }
 
-        void RewardBasedPreProcess()
+        void RewardBasedPreprocess()
         { }
 
         #endregion
 
-
         #   region Selection Algorithms
+
+        private int ParentSelection()
+        {
+            int parentIndex = 0;
+            switch (Selection)
+            {
+                case SelectionMode.RouletteWheel:
+                    parentIndex = RouletteWheel();
+                    break;
+                case SelectionMode.Tournament:
+                    parentIndex = Tournament();
+                    break;
+                case SelectionMode.RewardBased:
+                    parentIndex = RewardBased();
+                    break;
+            }
+            return parentIndex;
+        }
+
         private int RouletteWheel()
         {
-            Random rand = new Random();
-            double num = rand.NextDouble();
-
+            double num = GARandomGenerator.NextDouble();
             //binary search to find the random selected oragnism
             int start = 0;
             int end = populationSize - 1;
@@ -230,33 +240,21 @@ namespace ImageHiding.GeneticAlgorithm
                 mid = (start + end) / 2;
                 //the value is compared with the previous cumulative probability and the cumulative probability of the current item
                 //to handle the case if there is no previous item to compare with I set the previous value to 0
-                double prev;     
+                double prev;
                 if (mid == 0)
-                {
                     prev = 0.0;
-                }
                 else
-                {
-                    prev = cumProbability[mid - 1];
-                }
-                
-                if (num >= prev && num <= cumProbability[mid])
-                {
-                    return mid;
-                }
-                else if (num > cumProbability[mid])
-                {
-                    start = mid + 1;
-                }
-                else
-                {
-                    end = mid - 1;
-                }
-            }
+                    prev = cummulativeProbability[mid - 1];
 
+                if (num >= prev && num <= cummulativeProbability[mid])
+                    return mid;
+                else if (num > cummulativeProbability[mid])
+                    start = mid + 1;
+                else
+                    end = mid - 1;
+            }
             return mid;
         }
-
         private int Tournament()
         { return -1; }
         private int RewardBased()
@@ -265,3 +263,43 @@ namespace ImageHiding.GeneticAlgorithm
 
     }
 }
+
+# region Auxillary BoundPair Class
+public class BoundPair
+{
+    int lowerBound , upperBound;
+
+    public BoundPair()
+    { }
+    public BoundPair(int lowerBound, int upperBound)
+    {
+        this.lowerBound = lowerBound;
+        this.upperBound = upperBound;
+    }
+    public int LowerBound
+    {
+        set
+        {
+            lowerBound = value;
+        }
+
+        get
+        {
+            return lowerBound;
+        }
+    }
+    public int UpperBound
+    {
+        set
+        {
+            upperBound = value;
+        }
+
+        get
+        {
+            return upperBound;
+        }
+    }
+}
+
+#endregion

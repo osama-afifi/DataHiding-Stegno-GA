@@ -56,91 +56,52 @@ namespace ImageHiding
             return param;
         }
 
-        //private void collectBytes(List<int> para)
-        //{
-        //    int byteArrayLength = messageLength * (7 + numOfLSB) / numOfLSB;
-        //    MessageBitString  = new byte[byteArrayLength + 10];
-        //    int x0 = para[0], a = para[1], b = para[2], c = para[3];
-        //    int n = stegoImageBitmap.Height;
-        //    int m = stegoImageBitmap.Width;
-        //    stegoImage.LockImage();
-        //    int MOD = m * n;
-        //    int index = x0;
-        //    for (int i = 0; i < byteArrayLength; i++)
-        //    {
-        //        int x = index / n;
-        //        int y = index % m;
-        //        Color TargetPixelColor = stegoImage.GetPixel(x, y);
-        //        MessageBitString[i] = getLSB((byte)TargetPixelColor.ToArgb(), numOfLSB);
-        //        index = (((a % MOD * (int)powerMod(ref index, b, ref MOD)) % MOD) + c % MOD) % MOD;
-        //    }
-        //    //return MessageBitString;
-        //}
-
         private string getMessage(List<int> para)
-         {
-             string decryptedMessage = "";
-             int lsbSwitch = 0;
-             int newByte = 0;
+        {
+            string decryptedMessage = "";
+            int lsbSwitch = 0;
+            int newByte = 0;
+            HashSet<int> visitedPixels = new HashSet<int>();
+            int x0 = para[0], a = para[1], b = para[2], c = para[3];
+            int n = stegoImageBitmap.Height;
+            int m = stegoImageBitmap.Width;
+            stegoImage.LockImage();
+            int MOD = m * n;
+            int index = x0;
 
-                 int x0 = para[0], a = para[1], b = para[2], c = para[3];
-                 int n = stegoImageBitmap.Height;
-                 int m = stegoImageBitmap.Width;
-                 stegoImage.LockImage();
-                 int MOD = m * n;
-                 int index = x0;
+            for (int i = 0; i < 2 * messageLength; i++)
+            {
+                if (lsbSwitch == 0)
+                    newByte = 0;
 
-             for (int i = 0; i < 2 * messageLength; i++)
-             {
-                 if (lsbSwitch == 0)
-                  newByte = 0;
+                int x = index / m;
+                int y = index % n;
+                Color TargetPixelColor = stegoImage.GetPixel(y, x);
+                int colorARGB = TargetPixelColor.ToArgb();
+                //newByte |=  (getLSB(colorARGB, numOfLSB)) <<(lsbSwitch*numOfLSB);
+                if (lsbSwitch == 1)
+                {
+                    //   newByte <<= (numOfLSB);
+                    byte MSB = (byte)(getLSB(colorARGB >> (numOfLSB), numOfLSB));
+                    newByte |= (MSB << numOfLSB);
+                    decryptedMessage += (char)newByte;
+                }
+                else newByte = getLSB((byte)TargetPixelColor.ToArgb(), numOfLSB);
 
-                 int x = index / m;
-                 int y = index % n;
-                 Color TargetPixelColor = stegoImage.GetPixel(y, x);
-                 int colorARGB = TargetPixelColor.ToArgb();
-                 //newByte |=  (getLSB(colorARGB, numOfLSB)) <<(lsbSwitch*numOfLSB);
-                 if (lsbSwitch == 1)
-                 {
-                  //   newByte <<= (numOfLSB);
-                     byte MSB = (byte)(getLSB(colorARGB>> (numOfLSB), numOfLSB) );
-                     newByte |= (MSB << numOfLSB);
-                     decryptedMessage += (char)newByte;
-                 }
-                 else newByte = getLSB((byte)TargetPixelColor.ToArgb(), numOfLSB);
-
-                 index = (((a % MOD * (int)powerMod(ref index, b, ref MOD) % MOD) % MOD) + c % MOD) % MOD;
-                 lsbSwitch ^= 1;
-             }
-             stegoImage.UnlockImage();
-             stegoImageBitmap.Dispose();
-             return decryptedMessage;
-         }
-
-        //private string getMessage(byte[] byteArray)
-        //{
-        //    string ret = "";
-        //    int byteParts = messageLength * (7 + numOfLSB) / numOfLSB;
-        //    int byteSize = (7 + numOfLSB) / numOfLSB;
-        //    byte temp = 0;
-        //    //for (int i = 0; i < messageLength; i++)
-        //    //{
-        //    //    for (int j = 0; j < 8; j++)
-        //    //        temp |= (byte)(byteArray[i*byteSize  ] & (1 << j));
-
-        //    //}
-        //    for (int i = 0; i < byteParts; i += byteSize)
-        //    {
-        //        temp = 0;
-        //        for (int k = 0; k < byteSize; k++)
-        //        {
-        //            for (int j = 0; j < numOfLSB; j++)
-        //                temp |= (byte)( 1<<( (byteArray[i + k] & (1 << j)) * (k * numOfLSB )) ); //+j
-        //        }
-        //        ret += (char)temp;
-        //    }
-        //        return ret;
-        //}
+                visitedPixels.Add(index);
+                index = (((a % MOD * (int)powerMod(ref index, b, ref MOD) % MOD) % MOD) + c % MOD) % MOD;
+                while (visitedPixels.Contains(index))
+                {
+                    index++;
+                    index %= MOD;
+                }
+                visitedPixels.Add(index);
+                lsbSwitch ^= 1;
+            }
+            stegoImage.UnlockImage();
+            stegoImageBitmap.Dispose();
+            return decryptedMessage;
+        }
 
         private byte getLSB(int org, int k)
         {
@@ -160,7 +121,6 @@ namespace ImageHiding
                 Ret *= Ret;
                 return Ret % MOD;
             }
-
         }
     }
 }

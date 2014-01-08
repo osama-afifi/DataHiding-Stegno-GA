@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ImageHiding.GeneticAlgorithm
+namespace ImageHiding.GA
 {
     
-    class Organism : IComparable<Organism> , IEquatable<Organism>
+    public class Organism : IComparable<Organism> , IEquatable<Organism>
     {
        // public static int chromosomeLength;
         static Random RandomGenerator = new Random();
@@ -15,11 +15,11 @@ namespace ImageHiding.GeneticAlgorithm
         public double fitnessValue;
 
         public Organism() { }
-        public Organism(int chromosomeLength, ref KeyValuePair<int, int>[] genesDomain)
+        public Organism(int chromosomeLength, ref BoundPair[] genesDomain)
         {
             chromosome = new int[chromosomeLength];
             for (int i = 0; i < chromosomeLength; i++)
-                chromosome[i] = RandomGenerator.Next(genesDomain[i].Key, genesDomain[i].Value); // set the bounds of the gene
+                chromosome[i] = RandomGenerator.Next(genesDomain[i].LowerBound , genesDomain[i].UpperBound); // set the bounds of the gene
         }
         
 
