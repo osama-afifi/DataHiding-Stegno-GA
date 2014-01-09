@@ -14,9 +14,14 @@ namespace ImageHiding.GA
         public int[] chromosome;
         public double fitnessValue;
 
-        public Organism() { }
+        public Organism(int chromosomeLength) 
+        {
+            fitnessValue = 0;
+            chromosome = new int[chromosomeLength];
+        }
         public Organism(int chromosomeLength, ref BoundPair[] genesDomain)
         {
+            fitnessValue = 0;
             chromosome = new int[chromosomeLength];
             for (int i = 0; i < chromosomeLength; i++)
                 chromosome[i] = RandomGenerator.Next(genesDomain[i].LowerBound , genesDomain[i].UpperBound); // set the bounds of the gene
@@ -68,9 +73,9 @@ namespace ImageHiding.GA
         # region IComparable
         public int CompareTo(Organism x)
         {
-            if (fitnessValue < x.fitnessValue)
+            if (this.fitnessValue > x.fitnessValue)
                 return -1;
-            else if (fitnessValue > x.fitnessValue)
+            else if (this.fitnessValue < x.fitnessValue)
                 return 1;
             else
                 return 0;

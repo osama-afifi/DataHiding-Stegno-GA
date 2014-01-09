@@ -27,7 +27,7 @@ namespace ImageHiding.GA
         private double mutationRate;
         private int chromosomeLength;
         private int elitismFactor;
-        private ArrayList population;
+        private List<Organism> population;
         private BoundPair []genesDomain;
         private double fitnessSum;
         private double[] genomeProbability;
@@ -73,6 +73,7 @@ namespace ImageHiding.GA
             this.genesDomain = genesDomain;
             this.elitismFactor = elitismFactor;
             this.PrintLogMode = PrintLogMode;
+       
         }
 
         public Organism Run() // Warning you should assign an Fitness Function and genes Domain before running
@@ -84,7 +85,7 @@ namespace ImageHiding.GA
                 population.Sort();
                 matePopulation();
             }
-            Organism Best = (Organism)population[0]; // return the best Organism as Optimal Solution
+            Organism Best = (Organism)population[0]; // return the best Organism as Optimal Solution         
             return Best;
         }
 
@@ -92,6 +93,7 @@ namespace ImageHiding.GA
 
         private void createInitialPopulation()
         {
+            population = new List<Organism>();
             population.Clear();
             for (int i = 0; i < populationSize; i++)
             {
@@ -110,9 +112,9 @@ namespace ImageHiding.GA
         }
         private void matePopulation()
         {
-            ArrayList newPopulation = new ArrayList();
+            List<Organism> newPopulation = new List<Organism>();
             // Save the Elites
-            ArrayList Elites = new ArrayList();
+            List<Organism> Elites = new List<Organism>();
             for (int i = 0; i < elitismFactor; i++)
                 Elites.Add((Organism)population[i]);
 
@@ -122,19 +124,19 @@ namespace ImageHiding.GA
             {
                 Organism parent1 = (Organism)population[ParentSelection()];
                 Organism parent2 = (Organism)population[ParentSelection()];
-                Organism child1 = new Organism();
-                Organism child2 = new Organism();
+                Organism child1 = new Organism(chromosomeLength);
+                Organism child2 = new Organism(chromosomeLength);
                 if (GARandomGenerator.NextDouble() < crossoverRate)
                     crossover(ref parent1, ref parent2, out child1, out child2);
                 mutate(ref child1);
                 mutate(ref child2);
-                newPopulation.Add((Organism)child1);
-                newPopulation.Add((Organism)child2);
+                newPopulation.Add(child1);
+                newPopulation.Add(child2);
             }
             for (int i = 0; i < elitismFactor && i < populationSize; i++)
                 newPopulation[i] = (Organism)Elites[i];
             population.Clear();
-            population = new ArrayList(newPopulation);
+            population = new List<Organism>(newPopulation);
         }
         #endregion
 
