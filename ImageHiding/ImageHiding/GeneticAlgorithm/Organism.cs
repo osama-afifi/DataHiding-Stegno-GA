@@ -10,18 +10,17 @@ namespace ImageHiding.GA
     public class Organism : IComparable<Organism> , IEquatable<Organism>
     {
        // public static int chromosomeLength;
-        static Random RandomGenerator = new Random();
+       
         public int[] chromosome;
         public double fitnessValue;
 
         public Organism(int chromosomeLength) 
         {
-            fitnessValue = 0;
             chromosome = new int[chromosomeLength];
         }
         public Organism(int chromosomeLength, ref BoundPair[] genesDomain)
         {
-            fitnessValue = 0;
+            Random RandomGenerator = new Random();
             chromosome = new int[chromosomeLength];
             for (int i = 0; i < chromosomeLength; i++)
                 chromosome[i] = RandomGenerator.Next(genesDomain[i].LowerBound , genesDomain[i].UpperBound); // set the bounds of the gene

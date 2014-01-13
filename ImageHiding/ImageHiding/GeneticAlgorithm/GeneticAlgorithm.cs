@@ -30,8 +30,7 @@ namespace ImageHiding.GA
         private List<Organism> population;
         private BoundPair []genesDomain;
         private double fitnessSum;
-        private double[] genomeProbability;
-        private double[] cummulativeProbability;
+        private double[] cummulativeFitness;
         #endregion
 
         public delegate double EvaluationDelegate(params int[] values);
@@ -84,8 +83,10 @@ namespace ImageHiding.GA
                 rankPopulation();
                 population.Sort();
                 matePopulation();
+                double f = population[0].fitnessValue;
+                f.ToString();
             }
-            Organism Best = (Organism)population[0]; // return the best Organism as Optimal Solution         
+            Organism Best = (Organism)population[populationSize-1]; // return the best Organism as Optimal Solution         
             return Best;
         }
 
@@ -119,11 +120,15 @@ namespace ImageHiding.GA
                 Elites.Add((Organism)population[i]);
 
             SelectionPreprocess();
-
+            int[] freq = new int[populationSize]; // for test purposes;
             for (int i = 0; i < populationSize; i++)
             {
-                Organism parent1 = (Organism)population[ParentSelection()];
-                Organism parent2 = (Organism)population[ParentSelection()];
+                int parent1Index = ParentSelection();
+                int parent2Index = ParentSelection();
+                freq[parent1Index]++; //
+                freq[parent2Index]++; //
+                Organism parent1 = population[parent1Index];
+                Organism parent2 = population[parent2Index];
                 Organism child1 = new Organism(chromosomeLength);
                 Organism child2 = new Organism(chromosomeLength);
                 if (GARandomGenerator.NextDouble() < crossoverRate)
@@ -134,7 +139,7 @@ namespace ImageHiding.GA
                 newPopulation.Add(child2);
             }
             for (int i = 0; i < elitismFactor && i < populationSize; i++)
-                newPopulation[i] = (Organism)Elites[i];
+                newPopulation[i] = Elites[i];
             population.Clear();
             population = new List<Organism>(newPopulation);
         }
@@ -184,22 +189,27 @@ namespace ImageHiding.GA
 
         void RouletteWheelPreprocess()
         {
-            genomeProbability = new double[populationSize];
-            cummulativeProbability = new double[populationSize];
+
             fitnessSum = 0;
-            for (int i = 0; i < populationSize; i++)
-                fitnessSum += ((Organism)population[i]).fitnessValue;
+            //for (int i = 0; i < populationSize; i++)
+            //    fitnessSum += ((Organism)population[i]).fitnessValue;
+            cummulativeFitness = new double[populationSize];
+            cummulativeFitness[0] = population[0].fitnessValue;
+            for (int i = 1; i < populationSize; i++)
+                cummulativeFitness[i] = cummulativeFitness[i - 1] + population[i].fitnessValue;
+            for (int i = 1; i < populationSize; i++)
+                cummulativeFitness[i] = cummulativeFitness[i - 1] + cummulativeFitness[i];
+            fitnessSum = cummulativeFitness[populationSize-1];
+            ////probability of each organism from the population according to its fitness value
+            //for (int i = 0; i < populationSize; i++)
+            //    genomeProbability[i] = ((Organism)population[i]).fitnessValue / fitnessSum;
 
-            //probability of each organism from the population according to its fitness value
-            for (int i = 0; i < populationSize; i++)
-                genomeProbability[i] = ((Organism)population[i]).fitnessValue / fitnessSum;
-
-            //cumulative probability of each oragnism
-            for (int i = 0; i < populationSize; i++)
-                if (i == 0)
-                    cummulativeProbability[i] = genomeProbability[i];
-                else
-                    cummulativeProbability[i] = cummulativeProbability[i - 1] + genomeProbability[i];
+            ////cumulative probability of each oragnism
+            //for (int i = 0; i < populationSize; i++)
+            //    if (i == 0)
+            //        cummulativeProbability[i] = genomeProbability[i];
+            //    else
+            //        cummulativeProbability[i] = cummulativeProbability[i - 1] + genomeProbability[i];
         }
 
         void TournamentPreprocess()
@@ -232,30 +242,26 @@ namespace ImageHiding.GA
 
         private int RouletteWheel()
         {
-            double num = GARandomGenerator.NextDouble();
+            double accumulatedFreq = GARandomGenerator.NextDouble() * fitnessSum;
             //binary search to find the random selected oragnism
             int start = 0;
             int end = populationSize - 1;
-            int mid = (start + end) / 2;
-            while (start < end)
+            int ret = 0;
+            int prev = -1;
+            while (start <= end)
             {
-                mid = (start + end) / 2;
-                //the value is compared with the previous cumulative probability and the cumulative probability of the current item
-                //to handle the case if there is no previous item to compare with I set the previous value to 0
-                double prev;
-                if (mid == 0)
-                    prev = 0.0;
-                else
-                    prev = cummulativeProbability[mid - 1];
-
-                if (num >= prev && num <= cummulativeProbability[mid])
-                    return mid;
-                else if (num > cummulativeProbability[mid])
-                    start = mid + 1;
-                else
+                int mid = (start + end) / 2;
+                if (Math.Abs(prev - mid) < 1e-3) break;
+                if (accumulatedFreq <= cummulativeFitness[mid])
+                {
+                    ret =  mid;
                     end = mid - 1;
+                }
+                else if (accumulatedFreq < cummulativeFitness[mid])
+                    start = mid + 1;
+                prev = mid;
             }
-            return mid;
+            return ret;
         }
         private int Tournament()
         { return -1; }
@@ -284,7 +290,6 @@ public class BoundPair
         {
             lowerBound = value;
         }
-
         get
         {
             return lowerBound;
@@ -296,7 +301,6 @@ public class BoundPair
         {
             upperBound = value;
         }
-
         get
         {
             return upperBound;

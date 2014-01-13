@@ -74,10 +74,9 @@ namespace ImageHiding
             {
                 if (lsbSwitch == 0)
                     newByte = 0;
-
-                int x = index / imageWidth;
-                int y = index % imageHeight;
-                Color TargetPixelColor = stegoImageBitmap.GetPixel(y, x);
+                int y = index / imageWidth;
+                int x = index % imageWidth;
+                Color TargetPixelColor = stegoImageBitmap.GetPixel(x, y);
                 int colorARGB = TargetPixelColor.ToArgb();
                 //newByte |=  (getLSB(colorARGB, numOfLSB)) <<(lsbSwitch*numOfLSB);
                 if (lsbSwitch == 1)
@@ -96,7 +95,8 @@ namespace ImageHiding
                     index++;
                     index %= MOD;
                 }
-
+                index += MOD;
+                index %= MOD;
                 lsbSwitch ^= 1;
             }
             //stegoImage.UnlockImage();

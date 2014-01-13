@@ -17,8 +17,8 @@ namespace ImageHiding
      // private FastBitmap coverImage;
         private Bitmap stegoImageBitmap;
      //   private FastBitmap stegoImage;
-        private int imageWidth;
-        private int imageHeight;
+        private  int imageWidth;
+        private  int imageHeight;
         private int NumberOfLSB;
         //  private int BitPartitions;
 
@@ -86,19 +86,19 @@ namespace ImageHiding
             BoundPair[] parameterDomain = new BoundPair[4];
 
             //Domain of x0
-            parameterDomain[0] = new BoundPair(0, imageHeight * imageWidth);
+            parameterDomain[0] = new BoundPair(0, imageWidth);
             //Domain of a
-            parameterDomain[1] = new BoundPair(0, (imageHeight * imageWidth) / secretMessage.Length );
+            parameterDomain[1] = new BoundPair(1, imageWidth);
             //Domain of b
-            parameterDomain[2] = new BoundPair(1, (imageHeight * imageWidth) / secretMessage.Length );
+            parameterDomain[2] = new BoundPair(1, imageWidth);
             //Domain of c
-            parameterDomain[3] = new BoundPair(0, imageHeight * imageWidth);
+            parameterDomain[3] = new BoundPair(1, imageHeight);
 
             
             GeneticAlgorithm GA = new GeneticAlgorithm(
-                1000, // population size
+                100, // population size
                 4,   // chromosome Length
-                100, // Number of Generations
+                1000, // Number of Generations
                 0.80, // Crossover Ratio 
                 0.20, // Mutation Ratio
                 new GeneticAlgorithm.EvaluationDelegate(PSNR), // Fitness Function
@@ -116,7 +116,8 @@ namespace ImageHiding
             c = OptimalSequence.chromosome[3];
 
             double Trivial = PSNR(0, 1, 1, 1);
-            return PSNR(OptimalSequence.chromosome); ;
+            double optimalPSNR = PSNR(OptimalSequence.chromosome);
+            return optimalPSNR;
         }
 
         private void ReplacePixels(int x0, int a, int b, int c)
@@ -130,16 +131,18 @@ namespace ImageHiding
             int lsbSwitch = 0;
             for (int i = 0; i < 2 * secretMessage.Length; i++)
             {
-                int x = index / imageWidth;
-                int y = index % imageHeight;
+                int y = index / imageWidth;
+                int x = index % imageWidth;
                 byte newLSB = (byte)((((1 << NumberOfLSB) - 1) << (lsbSwitch * NumberOfLSB)) & secretMessage[i / 2]);
                 newLSB >>= (lsbSwitch * NumberOfLSB); //
-                Color OldColor = stegoImageBitmap.GetPixel(y, x);
+                Color OldColor = stegoImageBitmap.GetPixel(x, y);
                 byte newARGB = (byte)clearKBits(OldColor.ToArgb(), NumberOfLSB);
                 newARGB |= newLSB;
-                stegoImageBitmap.SetPixel(y, x, Color.FromArgb(newARGB));
+                stegoImageBitmap.SetPixel(x, y, Color.FromArgb(newARGB));
                 visitedPixels.Add(index);
                 index = (((a % MOD * (int)powerMod(ref index, b, ref MOD) % MOD) % MOD) + c % MOD) % MOD;
+                index += MOD;
+                index %= MOD;
                 while (visitedPixels.Contains(index))
                 {
                     index++;
@@ -193,13 +196,15 @@ namespace ImageHiding
             int lsbSwitch = 0;
             for (int i = 0; i < 2 * secretMessage.Length; i++)
             {
-                int x = index / imageWidth;
-                int y = index % imageHeight;
-                int coverPixel = coverImageBitmap.GetPixel(y, x).ToArgb();
+                int y = index / imageWidth;
+                int x = index % imageWidth;
+                int coverPixel = coverImageBitmap.GetPixel(x, y).ToArgb();
                 int stegoPixel = replaceKLSBBits(coverPixel, NumberOfLSB, secretMessage[i/2] >> (NumberOfLSB * lsbSwitch));
                 mse += (double)((coverPixel - stegoPixel) * (coverPixel - stegoPixel)) / (double)MUL;
                 visitedPixels.Add(index);
                 index = (((a % MUL * (int)powerMod(ref index, b, ref MUL) % MUL) % MUL) + c % MUL) % MUL;
+                index += MUL;
+                index %= MUL;
                 while (visitedPixels.Contains(index))
                 {
                     index++;
@@ -217,7 +222,7 @@ namespace ImageHiding
             int a = values[1];
             int b = values[2];
             int c = values[3];
-            double psnr = 20 * Math.Log10(1 << 24) - 10 * Math.Log10(MSE(x0, a, b, c));
+            double psnr = 20 * Math.Log10(1 << NumberOfLSB) - 10 * Math.Log10(MSE(x0, a, b, c));
             return psnr;
         }
 
