@@ -81,8 +81,8 @@ namespace ImageHiding
                 //newByte |=  (getLSB(colorARGB, numOfLSB)) <<(lsbSwitch*numOfLSB);
                 if (lsbSwitch == 1)
                 {
-                    //   newByte <<= (numOfLSB);
-                    // byte MSB = (byte)(getLSB(colorARGB >> (numOfLSB), numOfLSB));
+                //   newByte <<= (numOfLSB);
+                // byte MSB = (byte)(getLSB(colorARGB >> (numOfLSB), numOfLSB));
                     newByte |= ((getLSB((byte)colorARGB, numOfLSB)) << numOfLSB);
                     decryptedMessage += (char)newByte;
                 }

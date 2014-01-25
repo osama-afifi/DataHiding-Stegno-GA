@@ -14,9 +14,9 @@ namespace ImageHiding
     {
         private string secretMessage;
         private Bitmap coverImageBitmap;
-     // private FastBitmap coverImage;
+        private FastBitmap coverImage;
         private Bitmap stegoImageBitmap;
-     //   private FastBitmap stegoImage;
+        //   private FastBitmap stegoImage;
         private  int imageWidth;
         private  int imageHeight;
         private int NumberOfLSB;
@@ -25,30 +25,24 @@ namespace ImageHiding
         public Encrypt(string secretMessage, string coverImageDirectory)
         {
             this.secretMessage = secretMessage;
-            coverImageBitmap = new Bitmap(coverImageDirectory); // Creating Ordinary Bitmap to Load Image from Path 
-           // coverImage = new FastBitmap(coverImageBitmap);  // FastBitmap is a costum created unsafe bitmap which allow faster access by manual locking/unlocking
+            coverImageBitmap = new Bitmap(coverImageDirectory);
             stegoImageBitmap = new Bitmap(coverImageBitmap);
-          //  stegoImage = new FastBitmap(stegoImageBitmap);
-
+            coverImage = new FastBitmap(coverImageBitmap);
             NumberOfLSB = 4;
             imageHeight = coverImageBitmap.Height;
             imageWidth = coverImageBitmap.Width;
-
-
-            //    BitPartitions = (secretMessage.Length + NumberOfLSB - 1) / NumberOfLSB;
         }
 
         public string Run()
         {
 
-           // coverImage.LockImage();
-            //stegoImage.LockImage();
             string outputHash = "";
-            int x0 = 0, a = 1, b = 1, c = 1; // x0 , xi+1 = a(xi+1)^b +c passed by reference
-            double optimalPSNR = GenerateSequence(ref x0, ref a, ref b, ref c);
+            int x0 = 0, a = 1, b = 1, c = 1; // x0 , xi+1 = a(xi)^b +c passed by reference
+            coverImage.LockImage();
+            GenerateSequence(ref x0, ref a, ref b, ref c); // g*p*S
             ReplacePixels(x0, a, b, c);
+            coverImage.UnlockImage();
             outputHash = HashRecurrence(x0, a, b, c, secretMessage.Length);
-           // coverImage.UnlockImage();
            // stegoImage.UnlockImage();
             return outputHash;
         }
@@ -80,30 +74,29 @@ namespace ImageHiding
             return hashed;
         }
 
-        private double GenerateSequence(ref int x0, ref int a, ref int b, ref int c) // returns also the Optmal PSNR value
+        private void GenerateSequence(ref int x0, ref int a, ref int b, ref int c) // returns also the Optmal PSNR value
         {
             // Defining genes Domains
             BoundPair[] parameterDomain = new BoundPair[4];
 
             //Domain of x0
-            parameterDomain[0] = new BoundPair(0, imageWidth);
+            parameterDomain[0] = new BoundPair(0, imageWidth * imageHeight);
             //Domain of a
-            parameterDomain[1] = new BoundPair(1, imageWidth);
+            parameterDomain[1] = new BoundPair(1, imageWidth * imageHeight);
             //Domain of b
-            parameterDomain[2] = new BoundPair(1, imageWidth);
+            parameterDomain[2] = new BoundPair(1, imageWidth * imageHeight);
             //Domain of c
-            parameterDomain[3] = new BoundPair(1, imageHeight);
+            parameterDomain[3] = new BoundPair(1, imageWidth * imageHeight);
 
-            
             GeneticAlgorithm GA = new GeneticAlgorithm(
-                100, // population size
-                4,   // chromosome Length
-                1000, // Number of Generations
-                0.80, // Crossover Ratio 
-                0.20, // Mutation Ratio
+                30, // Population Size
+                4,   // Chromosome Length
+                100, // Number of Generations
+                0.85, // Crossover Ratio 
+                0.25, // Mutation Ratio
                 new GeneticAlgorithm.EvaluationDelegate(PSNR), // Fitness Function
-                parameterDomain, // domain of each Parameter
-                0,  // Elitism Factor
+                parameterDomain, // Domain of each Parameter
+                1,  // Elitism Factor
                 GeneticAlgorithm.SelectionMode.RouletteWheel  //Selection Method
                 );
 
@@ -114,10 +107,10 @@ namespace ImageHiding
             a = OptimalSequence.chromosome[1];
             b = OptimalSequence.chromosome[2];
             c = OptimalSequence.chromosome[3];
-
-            double Trivial = PSNR(0, 1, 1, 1);
-            double optimalPSNR = PSNR(OptimalSequence.chromosome);
-            return optimalPSNR;
+            double trivial = PSNR(0, 1, 1, 1);
+            double opt = PSNR(OptimalSequence.chromosome);
+            int x = 0;
+          
         }
 
         private void ReplacePixels(int x0, int a, int b, int c)
@@ -136,7 +129,7 @@ namespace ImageHiding
                 byte newLSB = (byte)((((1 << NumberOfLSB) - 1) << (lsbSwitch * NumberOfLSB)) & secretMessage[i / 2]);
                 newLSB >>= (lsbSwitch * NumberOfLSB); //
                 Color OldColor = stegoImageBitmap.GetPixel(x, y);
-                byte newARGB = (byte)clearKBits(OldColor.ToArgb(), NumberOfLSB);
+                int newARGB = clearKBits(OldColor.ToArgb(), NumberOfLSB);
                 newARGB |= newLSB;
                 stegoImageBitmap.SetPixel(x, y, Color.FromArgb(newARGB));
                 visitedPixels.Add(index);
@@ -198,9 +191,14 @@ namespace ImageHiding
             {
                 int y = index / imageWidth;
                 int x = index % imageWidth;
-                int coverPixel = coverImageBitmap.GetPixel(x, y).ToArgb();
-                int stegoPixel = replaceKLSBBits(coverPixel, NumberOfLSB, secretMessage[i/2] >> (NumberOfLSB * lsbSwitch));
-                mse += (double)((coverPixel - stegoPixel) * (coverPixel - stegoPixel)) / (double)MUL;
+               // int coverPixel = coverImage.GetPixel(x, y).ToArgb();
+                Color coverColor = coverImage.GetPixel(x, y);
+                int stegoPixel = replaceKLSBBits(coverColor.ToArgb(), NumberOfLSB, secretMessage[i / 2] >> (NumberOfLSB * lsbSwitch));
+                Color stegoColor = Color.FromArgb(stegoPixel);
+
+                mse += (double)((coverColor.R - stegoColor.R) * (coverColor.R - stegoColor.R));
+                mse += (double)((coverColor.G - stegoColor.G) * (coverColor.G - stegoColor.G));
+                mse += (double)((coverColor.B - stegoColor.B) * (coverColor.B - stegoColor.B));
                 visitedPixels.Add(index);
                 index = (((a % MUL * (int)powerMod(ref index, b, ref MUL) % MUL) % MUL) + c % MUL) % MUL;
                 index += MUL;
@@ -214,7 +212,8 @@ namespace ImageHiding
             }
             //coverImage.UnlockImage();
             //coverImageBitmap.Dispose();
-            return mse;
+            mse /= (double)MUL;
+            return mse/3.0;
         }
         private double PSNR(params int[] values)
         {
@@ -222,7 +221,8 @@ namespace ImageHiding
             int a = values[1];
             int b = values[2];
             int c = values[3];
-            double psnr = 20 * Math.Log10(1 << NumberOfLSB) - 10 * Math.Log10(MSE(x0, a, b, c));
+            //return 1.0/MSE(x0, a, b, c);
+            double psnr = 20 * Math.Log10((1 << 8) - 1) - 10 * Math.Log10(MSE(x0, a, b, c));
             return psnr;
         }
 

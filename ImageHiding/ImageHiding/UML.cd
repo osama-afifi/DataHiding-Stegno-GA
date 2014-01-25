@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="BitmapProcessing.FastBitmap" Collapsed="true">
+    <Position X="1" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AASBABAAAAAAiAAAQAAAAAAAIAAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>FastBitmap.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageHiding.Decrypt" Collapsed="true">
+    <Position X="3.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAKAAAEAAgAAAAAAAAgAAACUAAAAAgAAAAIAAAgAAA=</HashCode>
+      <FileName>Decrypt.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageHiding.Encrypt" Collapsed="true">
+    <Position X="3.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAJAgAEAAAAAAAEAAAgQAACAAEAAAAAEAAhIAAAQQI=</HashCode>
+      <FileName>Encrypt.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageHiding.GUIForm">
+    <Position X="9.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IINFIIQSACAABRADhoiQAkwCiAAA4BAAAIQAQAAAIAA=</HashCode>
+      <FileName>GUIForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageHiding.Program" Collapsed="true">
+    <Position X="3.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageHiding.GA.GeneticAlgorithm" Collapsed="true">
+    <Position X="6.75" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Enum Name="ImageHiding.GA.GeneticAlgorithm.SelectionMode" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>GeneticAlgorithm\GeneticAlgorithm.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Delegate Name="ImageHiding.GA.GeneticAlgorithm.EvaluationDelegate" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>GeneticAlgorithm\GeneticAlgorithm.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AhEAAEAACggAAABAAAGAAACJAAEsBEIACADKBAABQCo=</HashCode>
+      <FileName>GeneticAlgorithm\GeneticAlgorithm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageHiding.GA.Organism" BaseTypeListCollapsed="true">
+    <Position X="5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAQQgACAAgAAAAAABAAAAAAAAAAAAiA=</HashCode>
+      <FileName>GeneticAlgorithm\Organism.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="ImageHiding.Properties.Resources">
+    <Position X="3.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAABEAAAAQAAAAAAAAAAAAAAAIA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageHiding.Properties.Settings" Collapsed="true">
+    <Position X="3.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAIAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

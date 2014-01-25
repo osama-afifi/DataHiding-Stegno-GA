@@ -13,17 +13,17 @@ namespace ImageHiding.GA
        
         public int[] chromosome;
         public double fitnessValue;
-
+        public static Random RandomGenerator = new Random();
         public Organism(int chromosomeLength) 
         {
             chromosome = new int[chromosomeLength];
         }
         public Organism(int chromosomeLength, ref BoundPair[] genesDomain)
-        {
-            Random RandomGenerator = new Random();
+        {   
             chromosome = new int[chromosomeLength];
             for (int i = 0; i < chromosomeLength; i++)
-                chromosome[i] = RandomGenerator.Next(genesDomain[i].LowerBound , genesDomain[i].UpperBound); // set the bounds of the gene
+                chromosome[i] = RandomGenerator.Next(genesDomain[i].LowerBound, genesDomain[i].UpperBound); // set the bounds of the gene
+            
         }
         
 

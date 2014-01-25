@@ -10,14 +10,6 @@ D:\Osama\Programming\Projects\Image Hiding\ImageHidingGit\ImageHiding\ImageHidin
 D:\Osama\Programming\Projects\Image Hiding\Project\ImageHiding\ImageHiding\bin\Debug\ImageHiding.exe.config
 D:\Osama\Programming\Projects\Image Hiding\Project\ImageHiding\ImageHiding\obj\Debug\ImageHiding.exe
 D:\Osama\Programming\Projects\Image Hiding\Project\ImageHiding\ImageHiding\obj\Debug\ImageHiding.pdb
-D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\bin\Debug\ImageHiding.exe.config
-D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\obj\Debug\ImageHiding.exe
-D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\obj\Debug\ImageHiding.pdb
-D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\bin\Debug\ImageHiding.exe
-D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\bin\Debug\ImageHiding.pdb
-D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\obj\Debug\ImageHiding.GUIForm.resources
-D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\obj\Debug\ImageHiding.Properties.Resources.resources
-D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\obj\Debug\ImageHiding.csproj.GenerateResource.Cache
 D:\ImageHidingProject\ImageHiding\ImageHiding\bin\Debug\ImageHiding.exe.config
 D:\ImageHidingProject\ImageHiding\ImageHiding\obj\Debug\ImageHiding.exe
 D:\ImageHidingProject\ImageHiding\ImageHiding\obj\Debug\ImageHiding.pdb
@@ -27,4 +19,21 @@ D:\ImageHidingProject\ImageHiding\ImageHiding\obj\Debug\ImageHiding.csprojResolv
 D:\ImageHidingProject\ImageHiding\ImageHiding\obj\Debug\ImageHiding.GUIForm.resources
 D:\ImageHidingProject\ImageHiding\ImageHiding\obj\Debug\ImageHiding.Properties.Resources.resources
 D:\ImageHidingProject\ImageHiding\ImageHiding\obj\Debug\ImageHiding.csproj.GenerateResource.Cache
+D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\bin\Debug\ImageHiding.exe.config
+D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\bin\Debug\ImageHiding.exe
+D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\bin\Debug\ImageHiding.pdb
+D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\obj\Debug\ImageHiding.GUIForm.resources
+D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\obj\Debug\ImageHiding.Properties.Resources.resources
+D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\obj\Debug\ImageHiding.csproj.GenerateResource.Cache
+D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\obj\Debug\ImageHiding.exe
+D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\obj\Debug\ImageHiding.pdb
 D:\Osama\Programming\Projects\Image Hiding\projects\ImageHiding\ImageHiding\obj\Debug\ImageHiding.csprojResolveAssemblyReference.cache
+C:\Users\TEC\Desktop\ImageHiding\ImageHiding\bin\Debug\ImageHiding.exe.config
+C:\Users\TEC\Desktop\ImageHiding\ImageHiding\obj\Debug\ImageHiding.exe
+C:\Users\TEC\Desktop\ImageHiding\ImageHiding\obj\Debug\ImageHiding.pdb
+C:\Users\TEC\Desktop\ImageHiding\ImageHiding\bin\Debug\ImageHiding.exe
+C:\Users\TEC\Desktop\ImageHiding\ImageHiding\bin\Debug\ImageHiding.pdb
+C:\Users\TEC\Desktop\ImageHiding\ImageHiding\obj\Debug\ImageHiding.csprojResolveAssemblyReference.cache
+C:\Users\TEC\Desktop\ImageHiding\ImageHiding\obj\Debug\ImageHiding.GUIForm.resources
+C:\Users\TEC\Desktop\ImageHiding\ImageHiding\obj\Debug\ImageHiding.Properties.Resources.resources
+C:\Users\TEC\Desktop\ImageHiding\ImageHiding\obj\Debug\ImageHiding.csproj.GenerateResource.Cache

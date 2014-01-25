@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Threading;
+using ImageHiding;
 
 namespace ImageHiding.GA
 {
@@ -14,8 +17,7 @@ namespace ImageHiding.GA
         public enum SelectionMode
         {
             RouletteWheel,
-            Tournament,
-            RewardBased
+            Tournament
         };
 
         #region private members
@@ -28,9 +30,12 @@ namespace ImageHiding.GA
         private int chromosomeLength;
         private int elitismFactor;
         private List<Organism> population;
-        private BoundPair []genesDomain;
+        private BoundPair[] genesDomain;
         private double fitnessSum;
         private double[] cummulativeFitness;
+        private int tourSize;
+        List<int> tournamentItems;
+        private bool[] taken;
         #endregion
 
         public delegate double EvaluationDelegate(params int[] values);
@@ -61,7 +66,7 @@ namespace ImageHiding.GA
         public bool PrintLogMode;
 
 
-        public GeneticAlgorithm(int populationSize, int chromosomeLength, int numberOfGenerations, double crossoverRate, double mutationRate, EvaluationDelegate fitnessFunction, BoundPair[] genesDomain ,  int elitismFactor = 0, SelectionMode Selection = SelectionMode.RouletteWheel, bool PrintLogMode = false)
+        public GeneticAlgorithm(int populationSize, int chromosomeLength, int numberOfGenerations, double crossoverRate, double mutationRate, EvaluationDelegate fitnessFunction, BoundPair[] genesDomain, int elitismFactor = 0, SelectionMode Selection = SelectionMode.RouletteWheel, bool PrintLogMode = false)
         {
             this.populationSize = populationSize;
             this.chromosomeLength = chromosomeLength;
@@ -72,10 +77,9 @@ namespace ImageHiding.GA
             this.genesDomain = genesDomain;
             this.elitismFactor = elitismFactor;
             this.PrintLogMode = PrintLogMode;
-       
         }
 
-        public Organism Run() // Warning you should assign an Fitness Function and genes Domain before running
+        public Organism Run()
         {
             createInitialPopulation();
             for (int curGeneration = 1; curGeneration <= numberOfGenerations; ++curGeneration)
@@ -83,10 +87,10 @@ namespace ImageHiding.GA
                 rankPopulation();
                 population.Sort();
                 matePopulation();
-                double f = population[0].fitnessValue;
-                f.ToString();
             }
-            Organism Best = (Organism)population[populationSize-1]; // return the best Organism as Optimal Solution         
+            rankPopulation();
+            population.Sort();
+            Organism Best = (Organism)population[0]; // return the best Organism as Optimal Solution         
             return Best;
         }
 
@@ -117,29 +121,32 @@ namespace ImageHiding.GA
             // Save the Elites
             List<Organism> Elites = new List<Organism>();
             for (int i = 0; i < elitismFactor; i++)
-                Elites.Add((Organism)population[i]);
+                Elites.Add(population[i]);          
 
             SelectionPreprocess();
-            int[] freq = new int[populationSize]; // for test purposes;
-            for (int i = 0; i < populationSize; i++)
+            int[] freq = new int[populationSize];
+            for (int i = 0; i < populationSize/2; i++)
             {
-                int parent1Index = ParentSelection();
-                int parent2Index = ParentSelection();
-                freq[parent1Index]++; //
-                freq[parent2Index]++; //
-                Organism parent1 = population[parent1Index];
-                Organism parent2 = population[parent2Index];
+                int p1 = ParentSelection();
+                int p2 = ParentSelection();
+                freq[p1]++;
+                freq[p2]++;
+                Organism parent1 = (Organism)population[p1];
+                Organism parent2 = (Organism)population[p2];
                 Organism child1 = new Organism(chromosomeLength);
                 Organism child2 = new Organism(chromosomeLength);
                 if (GARandomGenerator.NextDouble() < crossoverRate)
-                    crossover(ref parent1, ref parent2, out child1, out child2);
+                    crossover(parent1, parent2, out child1, out child2);
+                else
+                    copyChromosome(parent1, parent2, out child1, out child2);              
+              
                 mutate(ref child1);
                 mutate(ref child2);
                 newPopulation.Add(child1);
                 newPopulation.Add(child2);
             }
             for (int i = 0; i < elitismFactor && i < populationSize; i++)
-                newPopulation[i] = Elites[i];
+                newPopulation[i] = (Organism)Elites[i];
             population.Clear();
             population = new List<Organism>(newPopulation);
         }
@@ -147,19 +154,43 @@ namespace ImageHiding.GA
 
         #region Genetic Operators
 
-
-        private void crossover(ref Organism parent1, ref Organism parent2, out Organism child1, out Organism child2)
+        private void copyChromosome(Organism parent1, Organism parent2, out Organism child1, out Organism child2)
         {
-            int pivot = GARandomGenerator.Next(0, chromosomeLength - 1);
-            for (int i = pivot; i < chromosomeLength; i++)
+            child1 = new Organism(chromosomeLength);
+            child2 = new Organism(chromosomeLength);
+            for (int i = 0; i < chromosomeLength; i++)
             {
-                int temp = parent1.chromosome[i];
-                parent1.chromosome[i] = parent2.chromosome[i];
-                parent2.chromosome[i] = temp;
+                child1.chromosome[i] = parent1.chromosome[i];
+                child2.chromosome[i] = parent2.chromosome[i];
             }
-            child1 = parent1;
-            child2 = parent2;
         }
+        private void copyChromosome(Organism parent, out Organism child)
+        {
+            child = new Organism(chromosomeLength);
+            for (int i = 0; i < chromosomeLength; i++)
+                child.chromosome[i] = parent.chromosome[i];          
+        }
+
+        private void crossover(Organism parent1, Organism parent2, out Organism child1, out Organism child2)
+        {
+            child1 = new Organism(chromosomeLength);
+            child2 = new Organism(chromosomeLength);
+            int pivot = GARandomGenerator.Next(0, chromosomeLength - 1);
+            for (int i = 0; i < chromosomeLength; i++)
+            {
+                if (i <= pivot)
+                {
+                    child1.chromosome[i] = parent1.chromosome[i];
+                    child2.chromosome[i] = parent2.chromosome[i];
+                }
+                else
+                {
+                    child1.chromosome[i] = parent2.chromosome[i];
+                    child2.chromosome[i] = parent1.chromosome[i];
+                }
+            }
+        }
+
 
         private void mutate(ref Organism mutatedOrganism)
         {
@@ -179,44 +210,35 @@ namespace ImageHiding.GA
                     RouletteWheelPreprocess();
                     break;
                 case SelectionMode.Tournament:
-                    TournamentPreprocess();
+                    TournamentPreprocess(0.1);
                     break;
-                case SelectionMode.RewardBased:
-                    RewardBasedPreprocess();
-                    break;
+               
             }
         }
 
         void RouletteWheelPreprocess()
         {
-
-            fitnessSum = 0;
-            //for (int i = 0; i < populationSize; i++)
-            //    fitnessSum += ((Organism)population[i]).fitnessValue;
             cummulativeFitness = new double[populationSize];
-            cummulativeFitness[0] = population[0].fitnessValue;
-            for (int i = 1; i < populationSize; i++)
-                cummulativeFitness[i] = cummulativeFitness[i - 1] + population[i].fitnessValue;
-            for (int i = 1; i < populationSize; i++)
-                cummulativeFitness[i] = cummulativeFitness[i - 1] + cummulativeFitness[i];
-            fitnessSum = cummulativeFitness[populationSize-1];
-            ////probability of each organism from the population according to its fitness value
-            //for (int i = 0; i < populationSize; i++)
-            //    genomeProbability[i] = ((Organism)population[i]).fitnessValue / fitnessSum;
-
-            ////cumulative probability of each oragnism
-            //for (int i = 0; i < populationSize; i++)
-            //    if (i == 0)
-            //        cummulativeProbability[i] = genomeProbability[i];
-            //    else
-            //        cummulativeProbability[i] = cummulativeProbability[i - 1] + genomeProbability[i];
+            for (int i = 0; i < populationSize; i++)
+            {
+                if (i == 0)
+                    cummulativeFitness[i] = population[i].fitnessValue;
+                else
+                    cummulativeFitness[i] = cummulativeFitness[i - 1] + population[i].fitnessValue;
+            }
+            //for (int i = 1; i < populationSize; i++)
+            //    cummulativeFitness[i] = cummulativeFitness[i - 1] + cummulativeFitness[i];
+            fitnessSum = cummulativeFitness[populationSize - 1];
+            
         }
 
-        void TournamentPreprocess()
-        { }
+        void TournamentPreprocess(double tPercentage)
+        {
+            tourSize = (int) tPercentage * populationSize;
+            tournamentItems.Clear();
+        }
 
-        void RewardBasedPreprocess()
-        { }
+       
 
         #endregion
 
@@ -233,40 +255,75 @@ namespace ImageHiding.GA
                 case SelectionMode.Tournament:
                     parentIndex = Tournament();
                     break;
-                case SelectionMode.RewardBased:
-                    parentIndex = RewardBased();
-                    break;
+               
             }
             return parentIndex;
         }
 
         private int RouletteWheel()
         {
-            double accumulatedFreq = GARandomGenerator.NextDouble() * fitnessSum;
+            double num =  GARandomGenerator.NextDouble() * fitnessSum;
             //binary search to find the random selected oragnism
             int start = 0;
             int end = populationSize - 1;
-            int ret = 0;
-            int prev = -1;
+            int mid = (start + end) / 2;
             while (start <= end)
             {
-                int mid = (start + end) / 2;
-                if (Math.Abs(prev - mid) < 1e-3) break;
-                if (accumulatedFreq <= cummulativeFitness[mid])
+                mid = (start + end) / 2;
+                //the value is compared with the previous cumulative probability and the cumulative probability of the current item
+                //to handle the case if there is no previous item to compare with I set the previous value to 0
+                double intervalStart;
+                double intervalEnd = cummulativeFitness[mid];
+                if (mid == 0)
+                    intervalStart = 0.0;
+                else
+                    intervalStart = cummulativeFitness[mid - 1];
+
+                if (num >= intervalStart && num <= cummulativeFitness[mid])
                 {
-                    ret =  mid;
-                    end = mid - 1;
+                    return mid;
                 }
-                else if (accumulatedFreq < cummulativeFitness[mid])
+                else if (num > cummulativeFitness[mid])
                     start = mid + 1;
-                prev = mid;
+                else
+                    end = mid - 1;
             }
-            return ret;
+            return mid;
         }
         private int Tournament()
-        { return -1; }
-        private int RewardBased()
-        { return -1; }
+        {
+            int takenCount = 0;
+            int toTake;
+            double maxFitness = 0;
+            int chosenItem = 0;
+            Random rnd = new Random();
+            tournamentItems.Clear();
+            //the default value of bool array is false
+            taken = new bool[populationSize];
+            //choose the tournament randomly
+            while (takenCount < tourSize)
+            {
+                toTake = rnd.Next(populationSize);
+                if (taken[toTake])
+                    continue;
+                else
+                {
+                    ++takenCount;
+                    taken[toTake] = true;
+                    tournamentItems.Add(toTake);
+                }
+            }
+            foreach (int i in tournamentItems)
+            {
+                if (population[i].fitnessValue > maxFitness)
+                {
+                    chosenItem = i;
+                    maxFitness = population[i].fitnessValue;
+                }
+            }
+            return chosenItem;
+        }
+        
         #   endregion
 
     }
@@ -275,7 +332,7 @@ namespace ImageHiding.GA
 # region Auxillary BoundPair Class
 public class BoundPair
 {
-    int lowerBound , upperBound;
+    int lowerBound, upperBound;
 
     public BoundPair()
     { }
@@ -290,6 +347,7 @@ public class BoundPair
         {
             lowerBound = value;
         }
+
         get
         {
             return lowerBound;
@@ -301,6 +359,7 @@ public class BoundPair
         {
             upperBound = value;
         }
+
         get
         {
             return upperBound;

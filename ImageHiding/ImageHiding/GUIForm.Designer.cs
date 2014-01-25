@@ -1,4 +1,6 @@
-﻿namespace ImageHiding
+﻿using System.Drawing;
+
+namespace ImageHiding
 {
     partial class GUIForm
     {
@@ -48,31 +50,39 @@
             this.PasteButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.backGroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             ((System.ComponentModel.ISupportInitialize)(this.BeforePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AfterPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // BeforePictureBox
             // 
-            this.BeforePictureBox.Location = new System.Drawing.Point(382, 24);
+            this.BeforePictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.BeforePictureBox.Location = new System.Drawing.Point(604, 45);
             this.BeforePictureBox.Name = "BeforePictureBox";
-            this.BeforePictureBox.Size = new System.Drawing.Size(170, 170);
+            this.BeforePictureBox.Size = new System.Drawing.Size(590, 290);
+            this.BeforePictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.BeforePictureBox.TabIndex = 0;
             this.BeforePictureBox.TabStop = false;
             this.BeforePictureBox.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // AfterPictureBox
             // 
-            this.AfterPictureBox.Location = new System.Drawing.Point(578, 24);
+            this.AfterPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.AfterPictureBox.Location = new System.Drawing.Point(604, 392);
             this.AfterPictureBox.Name = "AfterPictureBox";
-            this.AfterPictureBox.Size = new System.Drawing.Size(170, 170);
+            this.AfterPictureBox.Size = new System.Drawing.Size(590, 290);
+            this.AfterPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.AfterPictureBox.TabIndex = 1;
             this.AfterPictureBox.TabStop = false;
             this.AfterPictureBox.Click += new System.EventHandler(this.pictureBox2_Click);
             // 
             // EncryptButton
             // 
-            this.EncryptButton.Location = new System.Drawing.Point(274, 154);
+            this.EncryptButton.Location = new System.Drawing.Point(351, 191);
             this.EncryptButton.Name = "EncryptButton";
             this.EncryptButton.Size = new System.Drawing.Size(75, 23);
             this.EncryptButton.TabIndex = 2;
@@ -82,7 +92,7 @@
             // 
             // DecryptButton
             // 
-            this.DecryptButton.Location = new System.Drawing.Point(274, 424);
+            this.DecryptButton.Location = new System.Drawing.Point(351, 565);
             this.DecryptButton.Name = "DecryptButton";
             this.DecryptButton.Size = new System.Drawing.Size(75, 23);
             this.DecryptButton.TabIndex = 3;
@@ -92,7 +102,7 @@
             // 
             // InputMessageBox
             // 
-            this.InputMessageBox.Location = new System.Drawing.Point(12, 24);
+            this.InputMessageBox.Location = new System.Drawing.Point(89, 61);
             this.InputMessageBox.Multiline = true;
             this.InputMessageBox.Name = "InputMessageBox";
             this.InputMessageBox.Size = new System.Drawing.Size(337, 124);
@@ -101,14 +111,14 @@
             // 
             // FileImageDirectoryBox
             // 
-            this.FileImageDirectoryBox.Location = new System.Drawing.Point(12, 156);
+            this.FileImageDirectoryBox.Location = new System.Drawing.Point(89, 193);
             this.FileImageDirectoryBox.Name = "FileImageDirectoryBox";
             this.FileImageDirectoryBox.Size = new System.Drawing.Size(212, 20);
             this.FileImageDirectoryBox.TabIndex = 5;
             // 
             // ChooseImageButton
             // 
-            this.ChooseImageButton.Location = new System.Drawing.Point(230, 154);
+            this.ChooseImageButton.Location = new System.Drawing.Point(307, 191);
             this.ChooseImageButton.Name = "ChooseImageButton";
             this.ChooseImageButton.Size = new System.Drawing.Size(25, 23);
             this.ChooseImageButton.TabIndex = 6;
@@ -118,15 +128,16 @@
             // 
             // OutputMessageBox
             // 
-            this.OutputMessageBox.Location = new System.Drawing.Point(12, 251);
+            this.OutputMessageBox.Location = new System.Drawing.Point(89, 392);
             this.OutputMessageBox.Name = "OutputMessageBox";
+            this.OutputMessageBox.ReadOnly = true;
             this.OutputMessageBox.Size = new System.Drawing.Size(337, 141);
             this.OutputMessageBox.TabIndex = 7;
             this.OutputMessageBox.Text = "";
             // 
             // SelectImagetoDecryptBox
             // 
-            this.SelectImagetoDecryptBox.Location = new System.Drawing.Point(12, 424);
+            this.SelectImagetoDecryptBox.Location = new System.Drawing.Point(60, 567);
             this.SelectImagetoDecryptBox.Name = "SelectImagetoDecryptBox";
             this.SelectImagetoDecryptBox.Size = new System.Drawing.Size(212, 20);
             this.SelectImagetoDecryptBox.TabIndex = 8;
@@ -134,7 +145,7 @@
             // 
             // SelectImageToDecryptButton
             // 
-            this.SelectImageToDecryptButton.Location = new System.Drawing.Point(230, 424);
+            this.SelectImageToDecryptButton.Location = new System.Drawing.Point(298, 565);
             this.SelectImageToDecryptButton.Name = "SelectImageToDecryptButton";
             this.SelectImageToDecryptButton.Size = new System.Drawing.Size(25, 23);
             this.SelectImageToDecryptButton.TabIndex = 9;
@@ -145,24 +156,24 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 8);
+            this.label1.Location = new System.Drawing.Point(89, 45);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(190, 13);
+            this.label1.Size = new System.Drawing.Size(192, 13);
             this.label1.TabIndex = 10;
             this.label1.Text = "Encrypt Secret Message into an Image";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 235);
+            this.label2.Location = new System.Drawing.Point(86, 376);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(194, 13);
+            this.label2.Size = new System.Drawing.Size(197, 13);
             this.label2.TabIndex = 11;
             this.label2.Text = "Decrypt Secret Message from an Image";
             // 
             // EncryptionHash
             // 
-            this.EncryptionHash.Location = new System.Drawing.Point(86, 185);
+            this.EncryptionHash.Location = new System.Drawing.Point(163, 222);
             this.EncryptionHash.Name = "EncryptionHash";
             this.EncryptionHash.Size = new System.Drawing.Size(181, 20);
             this.EncryptionHash.TabIndex = 12;
@@ -170,7 +181,7 @@
             // 
             // DecryptionHash
             // 
-            this.DecryptionHash.Location = new System.Drawing.Point(104, 398);
+            this.DecryptionHash.Location = new System.Drawing.Point(177, 536);
             this.DecryptionHash.Name = "DecryptionHash";
             this.DecryptionHash.Size = new System.Drawing.Size(163, 20);
             this.DecryptionHash.TabIndex = 13;
@@ -179,16 +190,16 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(13, 188);
+            this.label3.Location = new System.Drawing.Point(90, 225);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(67, 13);
+            this.label3.Size = new System.Drawing.Size(68, 13);
             this.label3.TabIndex = 14;
             this.label3.Text = "Output Hash";
             this.label3.Click += new System.EventHandler(this.label3_Click);
             // 
             // CopyButton
             // 
-            this.CopyButton.Location = new System.Drawing.Point(273, 183);
+            this.CopyButton.Location = new System.Drawing.Point(350, 220);
             this.CopyButton.Name = "CopyButton";
             this.CopyButton.Size = new System.Drawing.Size(40, 23);
             this.CopyButton.TabIndex = 15;
@@ -199,7 +210,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 401);
+            this.label5.Location = new System.Drawing.Point(60, 536);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(86, 13);
             this.label5.TabIndex = 17;
@@ -207,36 +218,71 @@
             // 
             // PasteButton
             // 
-            this.PasteButton.Location = new System.Drawing.Point(274, 395);
+            this.PasteButton.Location = new System.Drawing.Point(378, 536);
             this.PasteButton.Name = "PasteButton";
             this.PasteButton.Size = new System.Drawing.Size(48, 23);
             this.PasteButton.TabIndex = 18;
             this.PasteButton.Text = "Paste!";
             this.PasteButton.UseVisualStyleBackColor = true;
+            this.PasteButton.Click += new System.EventHandler(this.PasteButton_Click);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(382, 8);
+            this.label4.Location = new System.Drawing.Point(601, 29);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(67, 13);
+            this.label4.Size = new System.Drawing.Size(69, 13);
             this.label4.TabIndex = 19;
             this.label4.Text = "Cover Image";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(578, 8);
+            this.label6.Location = new System.Drawing.Point(601, 376);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(84, 13);
+            this.label6.Size = new System.Drawing.Size(86, 13);
             this.label6.TabIndex = 20;
             this.label6.Text = "EncryptedImage";
+            // 
+            // progressBar
+            // 
+            this.progressBar.ForeColor = System.Drawing.Color.GreenYellow;
+            this.progressBar.Location = new System.Drawing.Point(93, 249);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(333, 20);
+            this.progressBar.TabIndex = 21;
+            this.progressBar.Click += new System.EventHandler(this.progressBar_Click);
+            // 
+            // backGroundWorker
+            // 
+            this.backGroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backGroundWorker_DoWork);
+            // 
+            // shapeContainer1
+            // 
+            this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer1.Name = "shapeContainer1";
+            this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
+            this.lineShape1});
+            this.shapeContainer1.Size = new System.Drawing.Size(1343, 719);
+            this.shapeContainer1.TabIndex = 22;
+            this.shapeContainer1.TabStop = false;
+            // 
+            // lineShape1
+            // 
+            this.lineShape1.Name = "lineShape1";
+            this.lineShape1.X1 = 0;
+            this.lineShape1.X2 = 1359;
+            this.lineShape1.Y1 = 355;
+            this.lineShape1.Y2 = 355;
             // 
             // GUIForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(760, 456);
+            this.AutoScroll = true;
+            this.ClientSize = new System.Drawing.Size(1343, 719);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.PasteButton);
@@ -257,9 +303,11 @@
             this.Controls.Add(this.EncryptButton);
             this.Controls.Add(this.AfterPictureBox);
             this.Controls.Add(this.BeforePictureBox);
+            this.Controls.Add(this.shapeContainer1);
             this.Name = "GUIForm";
             this.Text = "Image Data Hiding using Genetic Algorithms";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.Load += new System.EventHandler(this.GUIForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.BeforePictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AfterPictureBox)).EndInit();
             this.ResumeLayout(false);
@@ -289,7 +337,10 @@
         private System.Windows.Forms.Button PasteButton;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label6;
-
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.ComponentModel.BackgroundWorker backGroundWorker;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
+        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
     }
 }
 
