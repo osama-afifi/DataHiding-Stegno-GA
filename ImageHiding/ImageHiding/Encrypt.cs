@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Drawing;
 using BitmapProcessing;
@@ -16,12 +17,14 @@ namespace ImageHiding
         private Bitmap coverImageBitmap;
         private FastBitmap coverImage;
         private Bitmap stegoImageBitmap;
+        BackgroundWorker encryptWorker;
+        DoWorkEventArgs encryptEvent;
         //   private FastBitmap stegoImage;
         private  int imageWidth;
         private  int imageHeight;
         private int NumberOfLSB;
-        //  private int BitPartitions;
-
+        public string OutputHash;
+        
         public Encrypt(string secretMessage, string coverImageDirectory)
         {
             this.secretMessage = secretMessage;
@@ -33,18 +36,16 @@ namespace ImageHiding
             imageWidth = coverImageBitmap.Width;
         }
 
-        public string Run()
+        public void Run(BackgroundWorker sender, DoWorkEventArgs e)
         {
-
-            string outputHash = "";
+            this.encryptWorker = sender;
+            this.encryptEvent = e;
             int x0 = 0, a = 1, b = 1, c = 1; // x0 , xi+1 = a(xi)^b +c passed by reference
             coverImage.LockImage();
-            GenerateSequence(ref x0, ref a, ref b, ref c); // g*p*S
+            GenerateSequence(ref x0, ref a, ref b, ref c); 
             ReplacePixels(x0, a, b, c);
             coverImage.UnlockImage();
-            outputHash = HashRecurrence(x0, a, b, c, secretMessage.Length);
-           // stegoImage.UnlockImage();
-            return outputHash;
+            OutputHash = HashRecurrence(x0, a, b, c, secretMessage.Length);
         }
 
         public void SaveStegoImage(string stegoDir)
@@ -54,6 +55,7 @@ namespace ImageHiding
             stegoImageBitmap.Dispose();
             coverImageBitmap.Dispose();
         }
+
         private string HashRecurrence(int a, int b, int c, int d, int l)
         {
             List<int> Nums = new List<int>();
@@ -100,7 +102,7 @@ namespace ImageHiding
                 GeneticAlgorithm.SelectionMode.RouletteWheel  //Selection Method
                 );
 
-            ImageHiding.GA.Organism OptimalSequence = GA.Run(); // Run the Genetic Algorithm
+            ImageHiding.GA.Organism OptimalSequence = GA.Run(encryptWorker,encryptEvent); // Run the Genetic Algorithm
 
             //Get the Best Result
             x0 = OptimalSequence.chromosome[0];
@@ -228,7 +230,3 @@ namespace ImageHiding
 
     }
 }
-
-
-// user shouldn't replace the stego with the cover image
-// 

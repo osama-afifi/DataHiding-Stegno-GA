@@ -50,10 +50,15 @@ namespace ImageHiding
             this.PasteButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.backGroundWorker = new System.ComponentModel.BackgroundWorker();
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.ProgressLabel = new System.Windows.Forms.Label();
+            this.worker = new System.ComponentModel.BackgroundWorker();
+            this.PercLabel = new System.Windows.Forms.Label();
+            this.CancelEncrypt = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.BeforePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AfterPictureBox)).BeginInit();
             this.SuspendLayout();
@@ -158,7 +163,7 @@ namespace ImageHiding
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(89, 45);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(192, 13);
+            this.label1.Size = new System.Drawing.Size(190, 13);
             this.label1.TabIndex = 10;
             this.label1.Text = "Encrypt Secret Message into an Image";
             // 
@@ -167,7 +172,7 @@ namespace ImageHiding
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(86, 376);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(197, 13);
+            this.label2.Size = new System.Drawing.Size(194, 13);
             this.label2.TabIndex = 11;
             this.label2.Text = "Decrypt Secret Message from an Image";
             // 
@@ -177,7 +182,6 @@ namespace ImageHiding
             this.EncryptionHash.Name = "EncryptionHash";
             this.EncryptionHash.Size = new System.Drawing.Size(181, 20);
             this.EncryptionHash.TabIndex = 12;
-            this.EncryptionHash.TextChanged += new System.EventHandler(this.EncryptionHash_TextChanged);
             // 
             // DecryptionHash
             // 
@@ -192,7 +196,7 @@ namespace ImageHiding
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(90, 225);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(68, 13);
+            this.label3.Size = new System.Drawing.Size(67, 13);
             this.label3.TabIndex = 14;
             this.label3.Text = "Output Hash";
             this.label3.Click += new System.EventHandler(this.label3_Click);
@@ -231,7 +235,7 @@ namespace ImageHiding
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(601, 29);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(69, 13);
+            this.label4.Size = new System.Drawing.Size(67, 13);
             this.label4.TabIndex = 19;
             this.label4.Text = "Cover Image";
             // 
@@ -240,22 +244,9 @@ namespace ImageHiding
             this.label6.AutoSize = true;
             this.label6.Location = new System.Drawing.Point(601, 376);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(86, 13);
+            this.label6.Size = new System.Drawing.Size(84, 13);
             this.label6.TabIndex = 20;
             this.label6.Text = "EncryptedImage";
-            // 
-            // progressBar
-            // 
-            this.progressBar.ForeColor = System.Drawing.Color.GreenYellow;
-            this.progressBar.Location = new System.Drawing.Point(93, 249);
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(333, 20);
-            this.progressBar.TabIndex = 21;
-            this.progressBar.Click += new System.EventHandler(this.progressBar_Click);
-            // 
-            // backGroundWorker
-            // 
-            this.backGroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backGroundWorker_DoWork);
             // 
             // shapeContainer1
             // 
@@ -276,13 +267,76 @@ namespace ImageHiding
             this.lineShape1.Y1 = 355;
             this.lineShape1.Y2 = 355;
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(42, 267);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(420, 23);
+            this.progressBar1.TabIndex = 23;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(0, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(35, 13);
+            this.label7.TabIndex = 24;
+            this.label7.Text = "label7";
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(0, 0);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(100, 23);
+            this.label8.TabIndex = 0;
+            // 
+            // ProgressLabel
+            // 
+            this.ProgressLabel.AutoSize = true;
+            this.ProgressLabel.Location = new System.Drawing.Point(236, 297);
+            this.ProgressLabel.Name = "ProgressLabel";
+            this.ProgressLabel.Size = new System.Drawing.Size(0, 13);
+            this.ProgressLabel.TabIndex = 25;
+            // 
+            // worker
+            // 
+            this.worker.WorkerReportsProgress = true;
+            this.worker.WorkerSupportsCancellation = true;
+            this.worker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.worker_DoWork);
+            this.worker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.worker_ProgressChanged);
+            this.worker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.worker_RunWorkerCompleted);
+            // 
+            // PercLabel
+            // 
+            this.PercLabel.AutoSize = true;
+            this.PercLabel.Location = new System.Drawing.Point(42, 297);
+            this.PercLabel.Name = "PercLabel";
+            this.PercLabel.Size = new System.Drawing.Size(15, 13);
+            this.PercLabel.TabIndex = 26;
+            this.PercLabel.Text = "%";
+            // 
+            // CancelEncrypt
+            // 
+            this.CancelEncrypt.Location = new System.Drawing.Point(432, 191);
+            this.CancelEncrypt.Name = "CancelEncrypt";
+            this.CancelEncrypt.Size = new System.Drawing.Size(75, 23);
+            this.CancelEncrypt.TabIndex = 27;
+            this.CancelEncrypt.Text = "Cancel";
+            this.CancelEncrypt.UseVisualStyleBackColor = true;
+            this.CancelEncrypt.Click += new System.EventHandler(this.CancelEncrypt_Click);
+            // 
             // GUIForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(1343, 719);
-            this.Controls.Add(this.progressBar);
+            this.Controls.Add(this.CancelEncrypt);
+            this.Controls.Add(this.PercLabel);
+            this.Controls.Add(this.ProgressLabel);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.PasteButton);
@@ -337,10 +391,15 @@ namespace ImageHiding
         private System.Windows.Forms.Button PasteButton;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.ProgressBar progressBar;
-        private System.ComponentModel.BackgroundWorker backGroundWorker;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
         private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label ProgressLabel;
+        private System.ComponentModel.BackgroundWorker worker;
+        private System.Windows.Forms.Label PercLabel;
+        private System.Windows.Forms.Button CancelEncrypt;
     }
 }
 

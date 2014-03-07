@@ -79,15 +79,27 @@ namespace ImageHiding.GA
             this.PrintLogMode = PrintLogMode;
         }
 
-        public Organism Run()
+        public Organism Run(System.ComponentModel.BackgroundWorker sender, System.ComponentModel.DoWorkEventArgs e)
         {
             createInitialPopulation();
             for (int curGeneration = 1; curGeneration <= numberOfGenerations; ++curGeneration)
             {
+                // Event Issues to Report Progress
+                state eventState = new state();
+                eventState.currentGeneration = curGeneration;
+                eventState.numOfGenerations = numberOfGenerations;
+                if (sender.CancellationPending == true)
+                {
+                    e.Cancel = true;
+                    break;
+                }
+                sender.ReportProgress((int)(((double)curGeneration / (double)numberOfGenerations)*100), eventState);
+                // The Real Work
                 rankPopulation();
                 population.Sort();
                 matePopulation();
             }
+
             rankPopulation();
             population.Sort();
             Organism Best = (Organism)population[0]; // return the best Organism as Optimal Solution         
@@ -368,3 +380,9 @@ public class BoundPair
 }
 
 #endregion
+
+public class state
+{
+    public int currentGeneration;
+    public int numOfGenerations;
+}
