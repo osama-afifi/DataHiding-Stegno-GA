@@ -63,7 +63,7 @@ namespace ImageHiding
             int newByte = 0;
             HashSet<int> visitedPixels = new HashSet<int>();
             int x0 = para[0], a = para[1], b = para[2], c = para[3];
-          //  stegoImage.LockImage();
+          
             int MOD = imageWidth * imageHeight;
             int index = x0;
 
@@ -75,11 +75,9 @@ namespace ImageHiding
                 int x = index % imageWidth;
                 Color TargetPixelColor = stegoImageBitmap.GetPixel(x, y);
                 int colorARGB = TargetPixelColor.ToArgb();
-                //newByte |=  (getLSB(colorARGB, numOfLSB)) <<(lsbSwitch*numOfLSB);
+              
                 if (lsbSwitch == 1)
                 {
-                //   newByte <<= (numOfLSB);
-                // byte MSB = (byte)(getLSB(colorARGB >> (numOfLSB), numOfLSB));
                     newByte |= ((getLSB((byte)colorARGB, numOfLSB)) << numOfLSB);
                     decryptedMessage += (char)newByte;
                 }
@@ -96,8 +94,7 @@ namespace ImageHiding
                 index %= MOD;
                 lsbSwitch ^= 1;
             }
-            //stegoImage.UnlockImage();
-           // stegoImageBitmap.Dispose();
+            
             return decryptedMessage;
         }
 
